@@ -1,0 +1,7 @@
+.git/
+.venv/
+secret-data/*
+!secret-data/readme.md
+ailab-rapid-prototype.code-workspace
+*.pyc
+*.env
