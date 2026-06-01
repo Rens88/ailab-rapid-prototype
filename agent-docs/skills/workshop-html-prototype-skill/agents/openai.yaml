@@ -1,0 +1,7 @@
+interface:
+  display_name: "Workshop HTML Prototype"
+  short_description: "Create mobile-friendly standalone HTML concept prototypes for AI workshop use cases"
+  default_prompt: "Use the workshop-html-prototype skill to create a standalone HTML concept prototype from a workshop use-case canvas, agent-docs, example data, or legacy-code reference."
+
+policy:
+  allow_implicit_invocation: true

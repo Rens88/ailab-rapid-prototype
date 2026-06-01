@@ -1,80 +1,93 @@
-# AI App Workshop Template
+# AI Lab Rapid Prototype
 
 ## Overview
 
-This repository is a planning-first template for workshop participants who use AI tools such as Codex or Claude Code to go from a real-world idea to a rapid prototype.
+This repository is a planning-first workshop template for students who use AI coding agents to move from a real-world idea to a rapid prototype.
 
-The intended first milestone is not a production-grade app. It is a somewhat-interactive, easily-shareable prototype that makes the idea concrete enough to test with real people.
+The goal is not a production system. The goal is a small, understandable prototype that makes an idea concrete enough to test with real people.
 
-This template separates:
-- planning documents in `agent-docs/`,
-- safe demo inputs in `example-data/`,
-- private working data in `secret-data/`,
-- shared visual assets in `assets/`,
-- and one reference implementation in `legacy-prototype/`.
+The intended flow is:
 
----
-
-# First Deliverable
-
-For most participants, the best first artifact is a self-contained HTML prototype.
-
-Recommended constraints:
-- one `index.html` or `prototype.html` entry point,
-- optional static assets only,
-- mocked or example data instead of real integrations,
-- one complete end-to-end flow from input to output,
-- and one built-in way to collect feedback.
-
-Why this works well in a workshop:
-- almost no setup friction,
-- easy to regenerate with AI assistance,
-- easy to share by file or simple static hosting,
-- and it forces attention onto the user journey before infrastructure.
+```text
+idea -> agent planning docs -> Phase 1 clickable shell -> Phase 2 functional app
+```
 
 ---
 
-# What To Borrow From `legacy-prototype/`
+# Workshop Flow
 
-The reference prototype is currently a Streamlit app, not a template to copy literally. The useful patterns to reuse are:
-- start from sample data so a demo always works,
-- let the user select or narrow the scenario,
-- show the evidence or context behind the output,
-- generate a first result quickly,
-- and let the user steer or refine that result.
+1. Adapt the planning files in `agent-docs/` for your own idea.
+2. Ask the agent to inspect and plan before it edits files.
+3. Build a Phase 1 clickable shell in `prototype-shell/index.html`.
+4. Optionally regenerate a richer Phase 1 artifact with `generate_standalone_html.py`.
+5. Upgrade the most useful flow into a Phase 2 Streamlit app in `app.py`.
+6. Test with users and capture what changed in `agent-docs/MEMORY.md`.
+
+Start small. Prefer one complete journey over many unfinished features.
 
 ---
 
-# Working Rhythm
+# Key Files
 
-1. Define the problem and first prototype scope in `agent-docs/FEATURES.md` and `agent-docs/USER-STORIES.md`.
-2. Record constraints and guardrails in `agent-docs/CONSTITUTION.md`.
-3. Capture prompting strategy in `agent-docs/PROMPTS.md`.
-4. Build the first prototype with example or mocked data.
-5. Show it to real users and capture what changed in `agent-docs/MEMORY.md`.
+- `GETTING_STARTED.md`: setup steps for VS Code, Python, Codex sandbox, and local review.
+- `WORKSHOP-CHECKLIST.md`: phase-by-phase workshop checklist.
+- `AGENTS.md`: root-level instructions for AI coding agents.
+- `agent-docs/`: planning materials for constitution, prompts, memory, architecture, features, and user stories.
+- `prototype-shell/index.html`: Phase 1 standalone clickable concept prototype.
+- `generate_standalone_html.py`: root-level placeholder generator for a richer standalone HTML artifact.
+- `dist/index.html`: generated Phase 1 HTML output. Regenerate it instead of treating it as the source of truth.
+- `app.py`: Phase 2 minimal functional Streamlit scaffold. It is OK for this root file to be a small placeholder working app.
+- `example-data/`: public, safe demo inputs.
+- `secret-data/`: private working data; keep this out of agent context and git history.
+- `legacy-code/`: old reference implementation and patterns agents can inspect but should not copy blindly.
+
+---
+
+# Run The Prototypes
+
+Open the Phase 1 shell directly in a browser:
+
+```text
+prototype-shell/index.html
+```
+
+Run the Phase 2 app after installing dependencies:
+
+```bash
+streamlit run app.py
+```
+
+Regenerate the richer Phase 1 standalone HTML artifact:
+
+```bash
+python generate_standalone_html.py
+```
 
 ---
 
 # Folder Structure
 
 ```text
+AGENTS.md
+GETTING_STARTED.md
+WORKSHOP-CHECKLIST.md
 agent-docs/
+app.py
 assets/
+dist/
 example-data/
+generate_standalone_html.py
+legacy-code/
+prototype-shell/
 secret-data/
-legacy-prototype/
 ```
-
-Notes:
-- `agent-docs/` contains planning and operating documents for AI-assisted building.
-- `example-data/` is for synthetic or safely shareable demo data.
-- `secret-data/` is for real or private data and should stay out of git except for its `readme.md`.
-- `legacy-prototype/` is an example reference implementation and may be removed before distributing this template.
 
 ---
 
 # Important Documentation
 
+- `GETTING_STARTED.md`
+- `WORKSHOP-CHECKLIST.md`
 - `agent-docs/AGENTS.md`
 - `agent-docs/ARCHITECTURE.md`
 - `agent-docs/CONSTITUTION.md`
@@ -87,6 +100,4 @@ Notes:
 
 # Current Scope
 
-This template intentionally avoids committing real application code at the repository root.
-
-Use it to frame the problem, generate a first prototype, and decide what deserves a real implementation next.
+This template intentionally keeps the application surface small. A minimal placeholder Streamlit app in root-level `app.py` is welcome because it gives students a simple, conventional place to start. Keep it readable and easy to replace as the prototype matures.

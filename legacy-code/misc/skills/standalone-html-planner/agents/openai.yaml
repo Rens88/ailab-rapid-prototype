@@ -1,0 +1,7 @@
+interface:
+  display_name: "Standalone HTML Planner"
+  short_description: "Generate shareable map-and-timeline HTML apps"
+  default_prompt: "Use $standalone-html-planner to build a standalone HTML planner generated from local structured data."
+
+policy:
+  allow_implicit_invocation: true

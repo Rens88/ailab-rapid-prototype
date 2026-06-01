@@ -1,0 +1,11 @@
+secret-data/
+.venv/
+.env
+*.env
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db

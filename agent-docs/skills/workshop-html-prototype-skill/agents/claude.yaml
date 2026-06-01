@@ -1,0 +1,12 @@
+interface:
+  display_name: "Workshop HTML Prototype"
+  short_description: "Create mobile-friendly standalone HTML concept prototypes for AI workshop use cases"
+  default_prompt: "Use this skill to create a standalone HTML concept prototype from a workshop use-case canvas, agent-docs, example data, or legacy-code reference."
+
+instructions:
+  entrypoint: "SKILL.md"
+  preferred_output: "prototype-shell/index.html"
+  avoid:
+    - "Do not use secret-data/"
+    - "Do not over-engineer into a backend app"
+    - "Do not remove intentional agent-docs structure"

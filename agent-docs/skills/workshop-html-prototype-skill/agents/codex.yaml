@@ -1,0 +1,14 @@
+interface:
+  display_name: "Workshop HTML Prototype"
+  short_description: "Create standalone HTML concept prototypes inside workshop repos"
+  default_prompt: "Create or update prototype-shell/index.html using the workshop use-case canvas, agent-docs, example-data, and legacy-code references."
+
+workspace:
+  preferred_output: "prototype-shell/index.html"
+  read_first:
+    - "README.md"
+    - "GETTING_STARTED.md"
+    - "agent-docs/"
+  avoid:
+    - "secret-data/"
+    - ".venv/"

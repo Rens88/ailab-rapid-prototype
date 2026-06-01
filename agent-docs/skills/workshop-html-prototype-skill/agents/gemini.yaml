@@ -1,0 +1,8 @@
+interface:
+  display_name: "Workshop HTML Prototype"
+  short_description: "Create simple standalone HTML concept prototypes for AI workshop use cases"
+  default_prompt: "Use the workshop HTML prototype structure to create a shareable no-build concept demo."
+
+instructions:
+  entrypoint: "SKILL.md"
+  preferred_output: "prototype-shell/index.html"

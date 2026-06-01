@@ -1,0 +1,8 @@
+interface:
+  display_name: "Workshop HTML Prototype"
+  short_description: "Guide Cursor toward simple standalone HTML workshop prototypes"
+  default_prompt: "Build a simple mobile-friendly prototype-shell/index.html that explains the use case, users, demo flow, evidence, assumptions, feedback, and next steps."
+
+workspace:
+  preferred_output: "prototype-shell/index.html"
+  keep_simple: true
