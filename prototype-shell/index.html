@@ -3,25 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prototype Shell</title>
+  <title>LA Race Advisor — WSV / SIC</title>
   <style>
     :root {
       --ink: #17211d;
       --muted: #5e6a63;
-      --paper: #f7f4ec;
+      --paper: #eef3f7;
       --panel: #ffffff;
-      --line: #d8d2c4;
-      --field: #f1eee6;
-      --green: #1f6f54;
-      --green-dark: #154838;
+      --line: #c8d4dc;
+      --field: #e3edf4;
+      --blue: #1a5f8a;
+      --blue-dark: #0f3d5a;
       --gold: #d89b27;
       --coral: #d85f45;
-      --shadow: 0 18px 50px rgba(38, 35, 27, 0.14);
+      --green: #1f6f54;
+      --shadow: 0 18px 50px rgba(15, 28, 45, 0.14);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -29,21 +28,17 @@
       color: var(--ink);
       font-family: Georgia, "Times New Roman", serif;
       background:
-        linear-gradient(135deg, rgba(31, 111, 84, 0.12), transparent 35%),
-        radial-gradient(circle at 85% 10%, rgba(216, 155, 39, 0.18), transparent 32%),
+        linear-gradient(135deg, rgba(26, 95, 138, 0.10), transparent 38%),
+        radial-gradient(circle at 85% 8%, rgba(216, 155, 39, 0.13), transparent 30%),
         var(--paper);
     }
 
-    button,
-    select,
-    textarea {
-      font: inherit;
-    }
+    button, select, textarea { font: inherit; }
 
     .page {
-      width: min(1120px, calc(100% - 32px));
+      width: min(1140px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 34px 0 44px;
+      padding: 34px 0 56px;
     }
 
     header {
@@ -55,125 +50,163 @@
       border-bottom: 1px solid var(--line);
     }
 
+    .header-badges {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--panel);
+      padding: 3px 9px;
+      font-size: 0.76rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
     h1 {
       margin: 0;
-      max-width: 760px;
-      font-size: clamp(2.2rem, 6vw, 5.2rem);
+      font-size: clamp(2.2rem, 5.5vw, 4.8rem);
       line-height: 0.94;
-      letter-spacing: 0;
     }
 
     .intro {
       margin: 0;
       color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.5;
+      font-size: 1.02rem;
+      line-height: 1.55;
     }
 
     .workspace {
       display: grid;
       grid-template-columns: 360px 1fr;
       gap: 18px;
-      margin-top: 24px;
+      margin-top: 26px;
     }
 
     .panel {
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.86);
       border: 1px solid var(--line);
       border-radius: 8px;
       box-shadow: var(--shadow);
     }
 
-    .controls {
-      padding: 18px;
-    }
+    .controls { padding: 20px; }
 
     label {
       display: block;
-      margin: 0 0 8px;
+      margin: 0 0 6px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.86rem;
     }
 
-    select,
-    textarea {
+    select, textarea {
       width: 100%;
       border: 1px solid var(--line);
       border-radius: 6px;
       background: var(--field);
       color: var(--ink);
-      padding: 12px;
+      padding: 10px 12px;
     }
 
     textarea {
-      min-height: 108px;
+      min-height: 116px;
       resize: vertical;
-      line-height: 1.45;
+      line-height: 1.46;
     }
 
-    .field {
-      margin-bottom: 16px;
+    .field { margin-bottom: 14px; }
+
+    .voice-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: -8px 0 14px;
+      color: var(--muted);
+      font-size: 0.79rem;
+    }
+
+    .voice-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--coral);
+      flex-shrink: 0;
     }
 
     .primary {
       width: 100%;
       border: 0;
       border-radius: 6px;
-      background: var(--green);
+      background: var(--blue);
       color: white;
       padding: 13px 16px;
       cursor: pointer;
+      font-size: 1rem;
     }
 
-    .primary:hover {
-      background: var(--green-dark);
-    }
+    .primary:hover { background: var(--blue-dark); }
 
     .output {
       min-height: 520px;
       padding: 22px;
       display: grid;
-      gap: 18px;
+      gap: 16px;
+      align-content: start;
     }
 
     .result-top {
       display: flex;
       justify-content: space-between;
-      gap: 18px;
+      gap: 16px;
       align-items: flex-start;
     }
 
     .tag {
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgba(31, 111, 84, 0.3);
+      border: 1px solid rgba(26, 95, 138, 0.28);
       border-radius: 999px;
-      color: var(--green-dark);
-      padding: 6px 10px;
-      font-size: 0.86rem;
+      color: var(--blue-dark);
+      padding: 6px 12px;
+      font-size: 0.84rem;
       white-space: nowrap;
     }
 
-    h2,
-    h3 {
-      margin: 0;
-      letter-spacing: 0;
-    }
+    h2, h3 { margin: 0; }
 
-    h2 {
-      font-size: clamp(1.6rem, 3vw, 2.6rem);
-      line-height: 1.02;
-    }
-
-    h3 {
-      font-size: 1.05rem;
-    }
+    h2 { font-size: clamp(1.4rem, 2.4vw, 2.1rem); line-height: 1.06; }
+    h3 { font-size: 0.98rem; }
 
     .recommendation {
-      margin: 0;
-      font-size: 1.28rem;
-      line-height: 1.42;
+      margin: 8px 0 0;
+      font-size: 1.18rem;
+      line-height: 1.48;
     }
+
+    .weather-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .w-chip {
+      display: inline-flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--field);
+      padding: 5px 11px;
+      line-height: 1.3;
+    }
+
+    .w-chip strong { font-size: 0.98rem; }
+    .w-chip span { font-size: 0.7rem; color: var(--muted); }
 
     .evidence {
       display: grid;
@@ -182,36 +215,37 @@
     }
 
     .evidence-item {
-      min-height: 132px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fbfaf6;
-      padding: 14px;
+      background: #f2f6fa;
+      padding: 12px 14px;
     }
 
-    .evidence-item span {
+    .ev-label {
       display: block;
-      color: var(--coral);
-      font-size: 0.8rem;
-      margin-bottom: 8px;
+      color: var(--blue);
+      font-size: 0.74rem;
+      margin-bottom: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .evidence-item p {
       margin: 0;
       color: var(--muted);
-      line-height: 1.42;
+      line-height: 1.44;
+      font-size: 0.91rem;
     }
 
-    .next-step,
-    .feedback {
+    .next-step, .feedback {
       border-top: 1px solid var(--line);
-      padding-top: 16px;
+      padding-top: 14px;
     }
 
     .next-step p {
-      margin: 8px 0 0;
+      margin: 6px 0 0;
       color: var(--muted);
-      line-height: 1.45;
+      line-height: 1.46;
     }
 
     .feedback-row {
@@ -224,84 +258,92 @@
     .feedback button {
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: #fbfaf6;
+      background: #f2f6fa;
       color: var(--ink);
-      padding: 9px 12px;
+      padding: 8px 16px;
       cursor: pointer;
     }
 
     .feedback button.selected {
       border-color: var(--gold);
-      background: rgba(216, 155, 39, 0.16);
+      background: rgba(216, 155, 39, 0.15);
     }
 
     .status {
       min-height: 22px;
       margin-top: 10px;
-      color: var(--green-dark);
-      font-size: 0.95rem;
+      color: var(--green);
+      font-size: 0.9rem;
+    }
+
+    .mock-note {
+      margin-top: 6px;
+      font-size: 0.76rem;
+      color: var(--muted);
+      font-style: italic;
     }
 
     @media (max-width: 820px) {
-      header,
-      .workspace {
-        grid-template-columns: 1fr;
-      }
-
-      .output {
-        min-height: auto;
-      }
-
-      .result-top {
-        display: grid;
-      }
-
-      .evidence {
-        grid-template-columns: 1fr;
-      }
+      header, .workspace { grid-template-columns: 1fr; }
+      .output { min-height: auto; }
+      .result-top { flex-direction: column; }
+      .evidence { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
   <main class="page">
     <header>
-      <h1>Prototype Shell</h1>
-      <p class="intro">A standalone Phase 1 concept flow: pick a safe example, add a little context, generate a mocked recommendation, and capture feedback.</p>
+      <div>
+        <div class="header-badges">
+          <span class="badge">WSV · SIC Den Haag</span>
+          <span class="badge">LA 2028 Prep</span>
+          <span class="badge">Phase 1 Prototype</span>
+        </div>
+        <h1>LA Race<br>Advisor</h1>
+      </div>
+      <p class="intro">Pre-race location intelligence for Dutch sailing coaches. Select your class and situation, review the conditions context, and receive tactical advice drawn from combined weather data and stored coach observations from the LA venue.</p>
     </header>
 
-    <section class="workspace" aria-label="Clickable prototype workspace">
+    <section class="workspace" aria-label="Race advisor prototype">
       <form class="panel controls" id="prototype-form">
         <div class="field">
-          <label for="scenario">Example scenario</label>
+          <label for="scenario">Situation</label>
           <select id="scenario" name="scenario">
-            <option value="match">Match insight coach</option>
-            <option value="student">Student project helper</option>
-            <option value="support">Support triage assistant</option>
+            <option value="morning49er">Morning race · 49er · Course A</option>
+            <option value="afternoonNacra">Afternoon race · Nacra 17 · Course B</option>
+            <option value="debrief">Post-practice log · ILCA 7 · Course C</option>
           </select>
         </div>
 
         <div class="field">
-          <label for="context">Context to include</label>
-          <textarea id="context" name="context">City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.</textarea>
+          <label for="query">Your question or observation</label>
+          <textarea id="query" name="query"></textarea>
+          <p class="voice-hint">
+            <span class="voice-dot"></span>
+            In the real app, coaches send a voice note via WhatsApp to SIC.
+          </p>
         </div>
 
-        <button class="primary" type="submit">Generate draft insight</button>
+        <button class="primary" type="submit">Get race advice</button>
       </form>
 
       <section class="panel output" aria-live="polite">
         <div class="result-top">
           <div>
-            <h2 id="result-title">Match Insight Coach</h2>
-            <p class="recommendation" id="recommendation">Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.</p>
+            <h2 id="result-title"></h2>
+            <p class="recommendation" id="recommendation"></p>
           </div>
-          <span class="tag" id="audience">Youth football coach</span>
+          <span class="tag" id="audience"></span>
         </div>
+
+        <div class="weather-strip" id="weather-strip"></div>
 
         <div class="evidence" id="evidence"></div>
 
         <div class="next-step">
           <h3>Suggested next step</h3>
-          <p id="next-step">Test this with one coach and ask whether the output changes the next training plan.</p>
+          <p id="next-step"></p>
         </div>
 
         <div class="feedback">
@@ -312,6 +354,7 @@
             <button type="button" data-feedback="Not yet">Not yet</button>
           </div>
           <div class="status" id="feedback-status"></div>
+          <p class="mock-note">All outputs are mocked for this Phase 1 prototype. No live AI call is made.</p>
         </div>
       </section>
     </section>
@@ -319,95 +362,150 @@
 
   <script>
     const scenarios = {
-      match: {
-        title: "Match Insight Coach",
-        audience: "Youth football coach",
-        recommendation: "Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.",
-        evidence: [
-          "High shot volume with low shot accuracy.",
-          "Most chances came from wide areas.",
-          "Counters followed several midfield turnovers."
+      morning49er: {
+        title: "Morning Race Advisory · 49er",
+        audience: "Course A · Cabrillo",
+        query: "Forecast shows WSW 12 kts building to 18 by noon. Course A is set. Last October I saw the sea breeze shift left around 10:00. What should I expect today?",
+        weather: [
+          { value: "WSW 12 kts", label: "Wind now" },
+          { value: "→ 18 kts", label: "Building to" },
+          { value: "Bft 4", label: "Beaufort" },
+          { value: "18 °C", label: "Air temp" },
+          { value: "19 °C", label: "Water temp" },
+          { value: "Ebb −0.3 m", label: "Tide" }
         ],
-        nextStep: "Test this with one coach and ask whether the output changes the next training plan."
+        recommendation: "Start right for the initial WSW pressure. Expect an 8–12° left rotation around 10:00 — tack for the shift rather than sailing through it. In the second beat, the left layline is favored. Build into the shift, not away from it.",
+        evidence: [
+          {
+            label: "Weather station SMO · 06:15",
+            text: "WSW 12 kts, gusting 15 kts. Building forecast to 18 kts by 11:30. Typical sea-breeze pattern for this date range at this venue."
+          },
+          {
+            label: "Coach A observation · Oct 2025",
+            text: "Sea breeze shifted left 8–12° between 09:45 and 10:15 on Course A. Right start worked; finished on left layline."
+          },
+          {
+            label: "Historical pattern · Course A",
+            text: "7 of 9 sessions with similar morning WSW conditions showed a left rotation before noon. Pattern confidence: high."
+          }
+        ],
+        nextStep: "Monitor wind every 15 min from 09:30. Log your first-beat position and tack timing after the race via voice note."
       },
-      student: {
-        title: "Student Project Helper",
-        audience: "Workshop participant",
-        recommendation: "Turn the broad idea into a clickable flow that transforms one event goal into a draft task list and feedback prompt.",
-        evidence: [
-          "The idea is real but still broad.",
-          "The first prototype needs one clear journey.",
-          "Peer feedback is more useful than feature completeness."
+
+      afternoonNacra: {
+        title: "Afternoon Advisory · Nacra 17",
+        audience: "Course B · Long Beach",
+        query: "Racing on Course B at 14:00. Yesterday I saw a thermal drop — almost no pressure for 20 min. Today's forecast looks similar. How should I prepare?",
+        weather: [
+          { value: "SSW 16 kts", label: "Wind now" },
+          { value: "Thermal risk", label: "13:00–14:30" },
+          { value: "Bft 5", label: "Beaufort" },
+          { value: "21 °C", label: "Air temp" },
+          { value: "20 °C", label: "Water temp" },
+          { value: "Flood +0.5 m", label: "Tide" }
         ],
-        nextStep: "Show the shell to two peers before adding integrations."
+        recommendation: "High thermal-hole risk at race start time (13:00–14:30 window). Conservative start advised. If you commit to an aggressive start, position high-right to be first in pressure recovery. Brief your crew — foiling threshold may drop below minimum for 15–25 min. Prepare for displacement mode.",
+        evidence: [
+          {
+            label: "Forecast · temperature gradient",
+            text: "SSW 16 kts at 13:00. Thermal risk window 13:00–14:30 based on land/sea ΔT = 7 °C. Pressure may drop to under 5 kts temporarily."
+          },
+          {
+            label: "Coach B debrief · yesterday",
+            text: "Thermal at 13:32, pressure dropped from 16 to 4 kts for 22 min. Boats that stayed high and right recovered pressure first."
+          },
+          {
+            label: "Pattern · Course B thermal days",
+            text: "4 of 5 similar thermal-risk days show pressure recovery starting from the western course boundary. Avoid eastern layline during the drop."
+          }
+        ],
+        nextStep: "Discuss thermal tactics in tonight's team meeting. Use a voice note to log start-line conditions before the race."
       },
-      support: {
-        title: "Support Triage Assistant",
-        audience: "Customer support lead",
-        recommendation: "Create a triage summary with likely cause, sample reply, and one product question for the onboarding team.",
-        evidence: [
-          "Several customers report confusion at the same step.",
-          "The issue affects new users before activation.",
-          "Support notes contain enough detail for a mocked recommendation."
+
+      debrief: {
+        title: "Post-Practice Log · ILCA 7",
+        audience: "Course C · Offshore",
+        query: "Just finished 3 hours on Course C. NW 8 building to 14, oscillating every 8–10 min. Moderate chop. Port tack clearly favored in the first beat. Logging this now.",
+        weather: [
+          { value: "NW 9 kts", label: "Session avg" },
+          { value: "8–10 min", label: "Oscillation" },
+          { value: "Bft 3–4", label: "Beaufort" },
+          { value: "17 °C", label: "Air temp" },
+          { value: "18 °C", label: "Water temp" },
+          { value: "Slack", label: "Tide" }
         ],
-        nextStep: "Ask a support lead if the evidence shown is enough to trust the recommendation."
+        recommendation: "Observation saved. Port-tack bias on Course C in NW conditions is now supported by 4 data points — pattern confidence: high. Plan a port-tack start and target the early port layline on your next NW race here. The 8–10 min oscillation cycle is consistent with all prior entries.",
+        evidence: [
+          {
+            label: "Today's session · logged",
+            text: "NW 8→14 kts, 8–10 min oscillation, moderate chop. Port bias confirmed by three independent tack decisions during the session."
+          },
+          {
+            label: "Previous ILCA 7 sessions · 2 entries",
+            text: "Same NW conditions on Course C in Oct and Nov 2025. Port bias recorded in both sessions by two different coaches."
+          },
+          {
+            label: "Course C profile · NW pattern",
+            text: "Port bias now documented in 4 of 5 NW sessions logged in this system. Confidence level elevated to HIGH."
+          }
+        ],
+        nextStep: "Add a voice note with exact layline position details. Share this pattern in tonight's team meeting and tag it for the Course C briefing document."
       }
     };
 
-    const form = document.querySelector("#prototype-form");
-    const scenarioInput = document.querySelector("#scenario");
-    const contextInput = document.querySelector("#context");
-    const title = document.querySelector("#result-title");
-    const audience = document.querySelector("#audience");
-    const recommendation = document.querySelector("#recommendation");
-    const evidence = document.querySelector("#evidence");
-    const nextStep = document.querySelector("#next-step");
-    const feedbackStatus = document.querySelector("#feedback-status");
+    const form = document.getElementById("prototype-form");
+    const scenarioInput = document.getElementById("scenario");
+    const queryInput = document.getElementById("query");
+    const titleEl = document.getElementById("result-title");
+    const audienceEl = document.getElementById("audience");
+    const recommendationEl = document.getElementById("recommendation");
+    const weatherStripEl = document.getElementById("weather-strip");
+    const evidenceEl = document.getElementById("evidence");
+    const nextStepEl = document.getElementById("next-step");
+    const feedbackStatus = document.getElementById("feedback-status");
 
     function renderScenario(key) {
-      const scenario = scenarios[key];
-      title.textContent = scenario.title;
-      audience.textContent = scenario.audience;
-      recommendation.textContent = scenario.recommendation;
-      nextStep.textContent = scenario.nextStep;
-      evidence.innerHTML = scenario.evidence.map((item, index) => `
-        <article class="evidence-item">
-          <span>Evidence ${index + 1}</span>
-          <p>${item}</p>
-        </article>
-      `).join("");
+      const s = scenarios[key];
+      titleEl.textContent = s.title;
+      audienceEl.textContent = s.audience;
+      recommendationEl.textContent = s.recommendation;
+      nextStepEl.textContent = s.nextStep;
+
+      weatherStripEl.innerHTML = s.weather.map(w =>
+        `<div class="w-chip"><strong>${w.value}</strong><span>${w.label}</span></div>`
+      ).join("");
+
+      evidenceEl.innerHTML = s.evidence.map(item =>
+        `<article class="evidence-item">
+          <span class="ev-label">${item.label}</span>
+          <p>${item.text}</p>
+        </article>`
+      ).join("");
+
       feedbackStatus.textContent = "";
-      document.querySelectorAll("[data-feedback]").forEach((button) => {
-        button.classList.remove("selected");
-      });
+      document.querySelectorAll("[data-feedback]").forEach(b => b.classList.remove("selected"));
     }
 
     scenarioInput.addEventListener("change", () => {
-      const starterText = {
-        match: "City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.",
-        student: "The student has a broad AI idea and needs a quick prototype journey to test with peers.",
-        support: "Three customers report login confusion after the onboarding email. The support lead wants a clear triage view."
-      };
-      contextInput.value = starterText[scenarioInput.value];
+      queryInput.value = scenarios[scenarioInput.value].query;
       renderScenario(scenarioInput.value);
     });
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
+    form.addEventListener("submit", e => {
+      e.preventDefault();
       renderScenario(scenarioInput.value);
     });
 
-    document.querySelectorAll("[data-feedback]").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll("[data-feedback]").forEach((item) => {
-          item.classList.remove("selected");
-        });
-        button.classList.add("selected");
-        feedbackStatus.textContent = `Feedback captured: ${button.dataset.feedback}`;
+    document.querySelectorAll("[data-feedback]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-feedback]").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        feedbackStatus.textContent = `Feedback captured: "${btn.dataset.feedback}" — thank you.`;
       });
     });
 
-    renderScenario("match");
+    queryInput.value = scenarios[scenarioInput.value].query;
+    renderScenario(scenarioInput.value);
   </script>
 </body>
 </html>
