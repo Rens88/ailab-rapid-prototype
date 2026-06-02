@@ -1,27 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prototype Shell</title>
+  <title>Team DNA — KNVB</title>
   <style>
     :root {
       --ink: #17211d;
       --muted: #5e6a63;
       --paper: #f7f4ec;
-      --panel: #ffffff;
       --line: #d8d2c4;
       --field: #f1eee6;
       --green: #1f6f54;
+      --green-light: rgba(31, 111, 84, 0.12);
       --green-dark: #154838;
       --gold: #d89b27;
-      --coral: #d85f45;
-      --shadow: 0 18px 50px rgba(38, 35, 27, 0.14);
+      --gold-light: rgba(216, 155, 39, 0.16);
+      --coral: #c0392b;
+      --coral-light: rgba(192, 57, 43, 0.11);
+      --shadow: 0 18px 50px rgba(38, 35, 27, 0.13);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -29,385 +29,931 @@
       color: var(--ink);
       font-family: Georgia, "Times New Roman", serif;
       background:
-        linear-gradient(135deg, rgba(31, 111, 84, 0.12), transparent 35%),
-        radial-gradient(circle at 85% 10%, rgba(216, 155, 39, 0.18), transparent 32%),
+        linear-gradient(135deg, rgba(31, 111, 84, 0.08), transparent 35%),
+        radial-gradient(circle at 85% 10%, rgba(216, 155, 39, 0.13), transparent 32%),
         var(--paper);
     }
 
-    button,
-    select,
-    textarea {
-      font: inherit;
-    }
+    button, select { font: inherit; }
+
+    /* ── screens ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
 
     .page {
-      width: min(1120px, calc(100% - 32px));
+      width: min(900px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 34px 0 44px;
+      padding: 34px 0 60px;
     }
 
-    header {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 28px;
-      align-items: end;
-      padding: 28px 0;
+    /* ── site header ── */
+    .site-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-bottom: 22px;
       border-bottom: 1px solid var(--line);
+      margin-bottom: 36px;
     }
 
-    h1 {
-      margin: 0;
-      max-width: 760px;
-      font-size: clamp(2.2rem, 6vw, 5.2rem);
-      line-height: 0.94;
-      letter-spacing: 0;
-    }
-
-    .intro {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.5;
-    }
-
-    .workspace {
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 18px;
-      margin-top: 24px;
-    }
-
-    .panel {
-      background: rgba(255, 255, 255, 0.82);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-    }
-
-    .controls {
-      padding: 18px;
-    }
-
-    label {
-      display: block;
-      margin: 0 0 8px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid var(--line);
+    .logo-mark {
+      width: 40px;
+      height: 40px;
       border-radius: 6px;
-      background: var(--field);
-      color: var(--ink);
-      padding: 12px;
+      background: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
-    textarea {
-      min-height: 108px;
-      resize: vertical;
-      line-height: 1.45;
-    }
+    .site-name { margin: 0; font-size: 1.2rem; font-weight: bold; }
+    .site-org  { margin: 0; font-size: 0.82rem; color: var(--muted); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 
-    .field {
-      margin-bottom: 16px;
+    /* ── badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 0.76rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
     }
+    .badge-hoog   { background: var(--green-light); color: var(--green-dark); border: 1px solid rgba(31,111,84,0.22); }
+    .badge-middel { background: var(--gold-light);  color: #7a5a10;           border: 1px solid rgba(216,155,39,0.32); }
+    .badge-laag   { background: var(--coral-light); color: #7a1e14;           border: 1px solid rgba(192,57,43,0.22); }
 
-    .primary {
-      width: 100%;
+    /* ── buttons ── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       border: 0;
       border-radius: 6px;
       background: var(--green);
-      color: white;
-      padding: 13px 16px;
+      color: #fff;
+      padding: 13px 22px;
       cursor: pointer;
+      font-size: 1rem;
     }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-primary:disabled { opacity: 0.38; cursor: default; }
 
-    .primary:hover {
-      background: var(--green-dark);
-    }
-
-    .output {
-      min-height: 520px;
-      padding: 22px;
-      display: grid;
-      gap: 18px;
-    }
-
-    .result-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: flex-start;
-    }
-
-    .tag {
+    .btn-secondary {
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgba(31, 111, 84, 0.3);
-      border-radius: 999px;
-      color: var(--green-dark);
-      padding: 6px 10px;
-      font-size: 0.86rem;
-      white-space: nowrap;
-    }
-
-    h2,
-    h3 {
-      margin: 0;
-      letter-spacing: 0;
-    }
-
-    h2 {
-      font-size: clamp(1.6rem, 3vw, 2.6rem);
-      line-height: 1.02;
-    }
-
-    h3 {
-      font-size: 1.05rem;
-    }
-
-    .recommendation {
-      margin: 0;
-      font-size: 1.28rem;
-      line-height: 1.42;
-    }
-
-    .evidence {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .evidence-item {
-      min-height: 132px;
+      gap: 8px;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fbfaf6;
-      padding: 14px;
-    }
-
-    .evidence-item span {
-      display: block;
-      color: var(--coral);
-      font-size: 0.8rem;
-      margin-bottom: 8px;
-    }
-
-    .evidence-item p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.42;
-    }
-
-    .next-step,
-    .feedback {
-      border-top: 1px solid var(--line);
-      padding-top: 16px;
-    }
-
-    .next-step p {
-      margin: 8px 0 0;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .feedback-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .feedback button {
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: #fbfaf6;
+      border-radius: 6px;
+      background: #fff;
       color: var(--ink);
-      padding: 9px 12px;
+      padding: 10px 18px;
       cursor: pointer;
-    }
-
-    .feedback button.selected {
-      border-color: var(--gold);
-      background: rgba(216, 155, 39, 0.16);
-    }
-
-    .status {
-      min-height: 22px;
-      margin-top: 10px;
-      color: var(--green-dark);
       font-size: 0.95rem;
     }
+    .btn-secondary:hover { background: var(--field); }
 
-    @media (max-width: 820px) {
-      header,
-      .workspace {
-        grid-template-columns: 1fr;
-      }
+    /* ══════════════════════════════════════
+       SCREEN 1 — SELECT
+    ══════════════════════════════════════ */
+    .select-hero h1 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 0.95;
+      margin: 0 0 14px;
+    }
 
-      .output {
-        min-height: auto;
-      }
+    .select-hero p {
+      color: var(--muted);
+      margin: 0 0 32px;
+      line-height: 1.56;
+      font-size: 1.05rem;
+      max-width: 520px;
+    }
 
-      .result-top {
-        display: grid;
-      }
+    .select-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      max-width: 420px;
+    }
 
-      .evidence {
-        grid-template-columns: 1fr;
-      }
+    .field-label {
+      display: block;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .select-input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--ink);
+      padding: 12px 14px;
+      font-size: 1rem;
+    }
+    .select-input:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+
+    /* ══════════════════════════════════════
+       SCREEN 2 — PROGRESS
+    ══════════════════════════════════════ */
+    .progress-wrap {
+      max-width: 460px;
+      margin: 40px auto 0;
+    }
+
+    .progress-wrap h2 {
+      font-size: 1.55rem;
+      margin: 0 0 6px;
+    }
+
+    .progress-subtitle {
+      color: var(--muted);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.92rem;
+      margin: 0 0 34px;
+    }
+
+    .progress-steps { display: flex; flex-direction: column; gap: 0; }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 0;
+    }
+    .step:not(:last-child) { border-bottom: 1px solid var(--line); }
+
+    .step-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--line);
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      transition: background 0.25s, border-color 0.25s;
+    }
+
+    .step.active .step-icon {
+      border-color: var(--green);
+      color: var(--green);
+      animation: stepPulse 1.2s ease-in-out infinite;
+    }
+
+    .step.done .step-icon {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+
+    @keyframes stepPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(31,111,84,0.3); }
+      50%       { box-shadow: 0 0 0 5px rgba(31,111,84,0); }
+    }
+
+    .step-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.93rem;
+      color: var(--muted);
+      transition: color 0.25s;
+    }
+    .step.active .step-label,
+    .step.done .step-label { color: var(--ink); }
+
+    /* ══════════════════════════════════════
+       SCREEN 3 — REPORT
+    ══════════════════════════════════════ */
+    .report-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 26px;
+      flex-wrap: wrap;
+    }
+
+    .report-heading {
+      font-size: clamp(1.9rem, 4.5vw, 3rem);
+      line-height: 1;
+      margin: 0 0 6px;
+    }
+
+    .report-meta {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .report-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    /* legend */
+    .legend-box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      align-items: center;
+    }
+
+    .legend-title {
+      flex-basis: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    /* sections */
+    .report-section {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-bottom: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(38,35,27,0.05);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 15px 20px 13px;
+      border-bottom: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: bold;
+      margin: 0;
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .section-note {
+      flex-basis: 100%;
+      margin-top: 3px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: italic;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .section-body { padding: 16px 20px; }
+
+    /* matches table */
+    .matches-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .match-row {
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      gap: 8px;
+      align-items: baseline;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.88rem;
+    }
+
+    .match-date { color: var(--muted); font-size: 0.84rem; }
+    .match-opp  { color: var(--ink); }
+    .match-comp { color: var(--muted); font-size: 0.8rem; text-align: right; }
+
+    /* findings */
+    .finding { margin-bottom: 16px; }
+    .finding:last-child { margin-bottom: 0; }
+
+    .finding-label {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: var(--green-dark);
+      margin-bottom: 3px;
+    }
+
+    .finding-text {
+      font-size: 0.94rem;
+      line-height: 1.56;
+      margin: 0 0 5px;
+    }
+
+    .bron {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.77rem;
+      color: var(--muted);
+    }
+    .bron::before { content: "Bron: "; font-weight: 600; }
+
+    /* unavailability */
+    .unavail-body {
+      padding: 18px 20px;
+      background: rgba(192,57,43,0.05);
+      font-style: italic;
+      font-size: 0.93rem;
+      color: #7a1e14;
+      line-height: 1.52;
+    }
+
+    .unavail-note {
+      margin-top: 8px;
+      font-style: normal;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    /* disclaimer */
+    .section-disclaimer {
+      padding: 9px 20px 10px;
+      border-top: 1px solid var(--line);
+      background: #fafaf6;
+      font-style: italic;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.4;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* report footer */
+    .report-footer {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-meta {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── print ── */
+    @media print {
+      .no-print { display: none !important; }
+      .screen { display: none !important; }
+      #screen-report { display: block !important; }
+      body { background: #fff; }
+      .report-section { break-inside: avoid; page-break-inside: avoid; }
+      .page { width: 100%; padding: 0; }
+    }
+
+    @media (max-width: 620px) {
+      .match-row { grid-template-columns: 110px 1fr; }
+      .match-comp { display: none; }
+      .report-topbar { flex-direction: column; }
+      .legend-box { gap: 8px 12px; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <header>
-      <h1>Prototype Shell</h1>
-      <p class="intro">A standalone Phase 1 concept flow: pick a safe example, add a little context, generate a mocked recommendation, and capture feedback.</p>
+
+<!-- ══════════════════════════════════════
+     SCREEN 1 — SELECT OPPONENT
+══════════════════════════════════════ -->
+<div id="screen-select" class="screen active">
+  <div class="page">
+    <header class="site-header no-print">
+      <div class="logo-mark">TD</div>
+      <div>
+        <p class="site-name">Team DNA</p>
+        <p class="site-org">Koninklijke Nederlandse Voetbalbond</p>
+      </div>
     </header>
 
-    <section class="workspace" aria-label="Clickable prototype workspace">
-      <form class="panel controls" id="prototype-form">
-        <div class="field">
-          <label for="scenario">Example scenario</label>
-          <select id="scenario" name="scenario">
-            <option value="match">Match insight coach</option>
-            <option value="student">Student project helper</option>
-            <option value="support">Support triage assistant</option>
+    <div class="select-hero">
+      <h1>Tegenstander&shy;analyse</h1>
+      <p>Selecteer een tegenstander om een gestructureerd analyserapport te genereren op basis van eventdata uit de meest recente wedstrijden.</p>
+
+      <form class="select-form" id="select-form">
+        <div>
+          <label class="field-label" for="opponent-select">Tegenstander</label>
+          <select id="opponent-select" class="select-input">
+            <option value="">— Kies een team —</option>
+            <option value="engeland">Engeland</option>
+            <option value="italie">Italië</option>
+            <option value="armenie">Armenië</option>
           </select>
         </div>
-
-        <div class="field">
-          <label for="context">Context to include</label>
-          <textarea id="context" name="context">City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.</textarea>
+        <div>
+          <button class="btn-primary" type="submit" id="start-btn" disabled>Start analyse →</button>
         </div>
-
-        <button class="primary" type="submit">Generate draft insight</button>
       </form>
+    </div>
+  </div>
+</div>
 
-      <section class="panel output" aria-live="polite">
-        <div class="result-top">
-          <div>
-            <h2 id="result-title">Match Insight Coach</h2>
-            <p class="recommendation" id="recommendation">Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.</p>
-          </div>
-          <span class="tag" id="audience">Youth football coach</span>
+<!-- ══════════════════════════════════════
+     SCREEN 2 — PIPELINE PROGRESS
+══════════════════════════════════════ -->
+<div id="screen-progress" class="screen">
+  <div class="page">
+    <header class="site-header no-print">
+      <div class="logo-mark">TD</div>
+      <div>
+        <p class="site-name">Team DNA</p>
+        <p class="site-org">Koninklijke Nederlandse Voetbalbond</p>
+      </div>
+    </header>
+
+    <div class="progress-wrap">
+      <h2>Analyse wordt gegenereerd</h2>
+      <p class="progress-subtitle" id="progress-label">Tegenstander: —</p>
+
+      <div class="progress-steps">
+        <div class="step" id="step-1">
+          <div class="step-icon">○</div>
+          <span class="step-label">Bezig met ophalen van data</span>
         </div>
-
-        <div class="evidence" id="evidence"></div>
-
-        <div class="next-step">
-          <h3>Suggested next step</h3>
-          <p id="next-step">Test this with one coach and ask whether the output changes the next training plan.</p>
+        <div class="step" id="step-2">
+          <div class="step-icon">○</div>
+          <span class="step-label">Bezig met verwerken &amp; anonimiseren</span>
         </div>
-
-        <div class="feedback">
-          <h3>Was this useful?</h3>
-          <div class="feedback-row">
-            <button type="button" data-feedback="Useful">Useful</button>
-            <button type="button" data-feedback="Almost">Almost</button>
-            <button type="button" data-feedback="Not yet">Not yet</button>
-          </div>
-          <div class="status" id="feedback-status"></div>
+        <div class="step" id="step-3">
+          <div class="step-icon">○</div>
+          <span class="step-label">Rapport wordt gegenereerd</span>
         </div>
-      </section>
-    </section>
-  </main>
+        <div class="step" id="step-4">
+          <div class="step-icon">○</div>
+          <span class="step-label">Rapport gereed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <script>
-    const scenarios = {
-      match: {
-        title: "Match Insight Coach",
-        audience: "Youth football coach",
-        recommendation: "Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.",
-        evidence: [
-          "High shot volume with low shot accuracy.",
-          "Most chances came from wide areas.",
-          "Counters followed several midfield turnovers."
+<!-- ══════════════════════════════════════
+     SCREEN 3 — REPORT
+══════════════════════════════════════ -->
+<div id="screen-report" class="screen">
+  <div class="page">
+    <header class="site-header no-print">
+      <div class="logo-mark">TD</div>
+      <div>
+        <p class="site-name">Team DNA</p>
+        <p class="site-org">Koninklijke Nederlandse Voetbalbond</p>
+      </div>
+    </header>
+
+    <div class="report-topbar">
+      <div>
+        <h1 class="report-heading" id="report-heading">—</h1>
+        <p class="report-meta" id="report-meta">—</p>
+      </div>
+      <div class="report-actions no-print">
+        <button class="btn-secondary" id="btn-back">← Nieuwe analyse</button>
+        <button class="btn-primary" id="btn-export">Exporteer als PDF</button>
+      </div>
+    </div>
+
+    <!-- legend -->
+    <div class="legend-box">
+      <span class="legend-title">Datadekking per sectie</span>
+      <span class="legend-item"><span class="badge badge-hoog">Hoog</span> Voldoende data voor een onderbouwde uitspraak</span>
+      <span class="legend-item"><span class="badge badge-middel">Middel</span> Beperkte data; conclusies zijn indicatief</span>
+      <span class="legend-item"><span class="badge badge-laag">Laag</span> Onvoldoende data; bevindingen zijn speculatief of ontbreken</span>
+    </div>
+
+    <!-- dynamic content -->
+    <div id="report-content"></div>
+
+    <div class="report-footer">
+      <div class="footer-meta" id="report-footer-meta">—</div>
+      <button class="btn-primary no-print" id="btn-export-2">Exporteer als PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// OPPONENT DATA
+// ============================================================
+
+const OPPONENTS = {
+  engeland: {
+    label: "Engeland",
+    matches: [
+      { date: "4 april 2025",      opp: "Nederland",    comp: "WK-kwalificatie",       result: "1–0" },
+      { date: "22 maart 2025",     opp: "Albanië",      comp: "WK-kwalificatie",       result: "2–0" },
+      { date: "19 maart 2025",     opp: "Letland",      comp: "WK-kwalificatie",       result: "3–1" },
+      { date: "14 november 2024",  opp: "Noorwegen",    comp: "Vriendschappelijk",     result: "2–1" },
+      { date: "10 oktober 2024",   opp: "Griekenland",  comp: "UEFA Nations League",   result: "2–1" },
+      { date: "7 oktober 2024",    opp: "Finland",      comp: "UEFA Nations League",   result: "3–1" }
+    ],
+    sections: [
+      {
+        title: "Speelstijlsamenvatting",
+        indicator: "Hoog",
+        findings: [
+          {
+            text: "Engeland speelt met een hoge pressing in de aanvalsfase: gemiddeld PPDA van 6.2 over de selectie, wat duidt op agressieve druk in de opbouwfase van de tegenstander.",
+            bronnen: "4-4-2025 (Nederland), 22-3-2025 (Albanië), 19-3-2025 (Letland)"
+          },
+          {
+            text: "De aanval verloopt primair via de rechterflank: 42% van de aanvallen wordt langs de rechterzijde opgebouwd. De linkerflank is beduidend minder actief (22%).",
+            bronnen: "22-3-2025 (Albanië), 14-11-2024 (Noorwegen), 10-10-2024 (Griekenland), 7-10-2024 (Finland)"
+          },
+          {
+            text: "Verdedigend hanteert Engeland een middelhoog blok bij gelijkstand of voorsprong, en schakelt naar een laag blok bij achterstand. Omschakeling na balwinst is direct en verticaal via diepteballen.",
+            bronnen: "4-4-2025 (Nederland), 10-10-2024 (Griekenland), 7-10-2024 (Finland)"
+          }
         ],
-        nextStep: "Test this with one coach and ask whether the output changes the next training plan."
+        disclaimer: "Bevindingen zijn gebaseerd op event data en bedoeld als startpunt voor verdere analyse. Het professionele oordeel van de scout blijft leidend."
       },
-      student: {
-        title: "Student Project Helper",
-        audience: "Workshop participant",
-        recommendation: "Turn the broad idea into a clickable flow that transforms one event goal into a draft task list and feedback prompt.",
-        evidence: [
-          "The idea is real but still broad.",
-          "The first prototype needs one clear journey.",
-          "Peer feedback is more useful than feature completeness."
+      {
+        title: "Sterktes per spelfase",
+        indicator: "Hoog",
+        findings: [
+          {
+            label: "Aanvallende opbouw",
+            text: "Sterke rechterflank met frequente overlap: gemiddeld 18 gecombineerde flankacties per wedstrijd. Hoog aankomstpercentage dieptebal rechts (68%).",
+            bronnen: "22-3-2025 (Albanië), 19-3-2025 (Letland), 14-11-2024 (Noorwegen)"
+          },
+          {
+            label: "Verdedigende organisatie",
+            text: "Sterk defensief blok in de eigen helft: gemiddeld 4.2 key interceptions per wedstrijd. Effectief in luchtduels bij standaardsituaties in het strafschopgebied (74% gewonnen).",
+            bronnen: "4-4-2025 (Nederland), 22-3-2025 (Albanië), 10-10-2024 (Griekenland)"
+          },
+          {
+            label: "Standaardsituaties",
+            text: "Bovengemiddelde doelgevaarcreatie via corners en vrije trappen: gemiddeld 2.1 schoten binnen de 16-meter per standaardsituatieserie.",
+            bronnen: "4-4-2025 (Nederland), 7-10-2024 (Finland)"
+          }
         ],
-        nextStep: "Show the shell to two peers before adding integrations."
+        disclaimer: "Bevindingen zijn gebaseerd op event data en bedoeld als startpunt voor verdere analyse. Het professionele oordeel van de scout blijft leidend."
       },
-      support: {
-        title: "Support Triage Assistant",
-        audience: "Customer support lead",
-        recommendation: "Create a triage summary with likely cause, sample reply, and one product question for the onboarding team.",
-        evidence: [
-          "Several customers report confusion at the same step.",
-          "The issue affects new users before activation.",
-          "Support notes contain enough detail for a mocked recommendation."
+      {
+        title: "Zwaktes per spelfase",
+        indicator: "Middel",
+        indicatorNote: "Gebaseerd op 4 van 6 wedstrijden; data voor de overige wedstrijden was gedeeltelijk incompleet.",
+        findings: [
+          {
+            label: "Aanvallende opbouw",
+            text: "Beperkte variatie via de linkerflank: slechts 22% van de aanvallen. Lage succesrate bij combinaties door het midden: 34% bereikt een medespeler in de aanvalslinie.",
+            bronnen: "4-4-2025 (Nederland), 22-3-2025 (Albanië), 19-3-2025 (Letland), 7-10-2024 (Finland)"
+          },
+          {
+            label: "Omschakeling aanval→verdediging",
+            text: "Verhoogd risico bij hoog balbezit in de eindfase: gemiddeld 2.8 tegenaanvallen toegestaan per wedstrijd wanneer balbezit boven 65%.",
+            bronnen: "4-4-2025 (Nederland), 14-11-2024 (Noorwegen), 10-10-2024 (Griekenland)"
+          }
         ],
-        nextStep: "Ask a support lead if the evidence shown is enough to trust the recommendation."
+        disclaimer: "Bevindingen zijn gebaseerd op event data en bedoeld als startpunt voor verdere analyse. Het professionele oordeel van de scout blijft leidend."
+      },
+      {
+        title: "Tactische aandachtspunten",
+        indicator: "Middel",
+        indicatorNote: "Conclusies zijn indicatief; gebaseerd op patronen uit 4 wedstrijden.",
+        findings: [
+          {
+            text: "Uit de data blijkt dat de tegenstander kwetsbaar is voor vroeg hoge druk op de linkercentrale verdediger: gemiddeld 3.1 balverliezen per 90 minuten op die positie in de opbouwfase.",
+            bronnen: "22-3-2025 (Albanië), 19-3-2025 (Letland), 14-11-2024 (Noorwegen)"
+          },
+          {
+            text: "Uit de data blijkt dat de tegenstander bij ingooien in de eigen helft regelmatig ruimte biedt achter de verdedigingslinie: 6 van 14 geanalyseerde ingooien resulteerden in een gevaarlijke situatie.",
+            bronnen: "4-4-2025 (Nederland), 10-10-2024 (Griekenland)"
+          }
+        ],
+        disclaimer: "Aandachtspunten zijn geformuleerd als observaties op basis van de data, niet als tactische adviezen. Verificatie via video-analyse is aanbevolen."
+      },
+      {
+        title: "Datalimitaties en aanbevelingen voor aanvullende analyse",
+        indicator: "Laag",
+        unavailable: true,
+        unavailableText: "Deze sectie kan niet worden onderbouwd op basis van de beschikbare data. Aanbeveling: aanvullen via video-analyse.",
+        unavailableNote: "Pressing-statistieken per zone (PPDA per veldderde) ontbreken voor 3 van 6 wedstrijden. Individuele spelersprestaties zijn niet beschikbaar voor dit rapport."
       }
-    };
+    ]
+  },
 
-    const form = document.querySelector("#prototype-form");
-    const scenarioInput = document.querySelector("#scenario");
-    const contextInput = document.querySelector("#context");
-    const title = document.querySelector("#result-title");
-    const audience = document.querySelector("#audience");
-    const recommendation = document.querySelector("#recommendation");
-    const evidence = document.querySelector("#evidence");
-    const nextStep = document.querySelector("#next-step");
-    const feedbackStatus = document.querySelector("#feedback-status");
+  italie: {
+    label: "Italië",
+    matches: [
+      { date: "26 maart 2025",    opp: "Duitsland", comp: "WK-kwalificatie",       result: "1–1" },
+      { date: "23 maart 2025",    opp: "Litouwen",  comp: "WK-kwalificatie",       result: "2–0" },
+      { date: "15 november 2024", opp: "België",    comp: "UEFA Nations League",   result: "1–0" },
+      { date: "14 oktober 2024",  opp: "Israël",    comp: "UEFA Nations League",   result: "4–1" }
+    ],
+    sections: [
+      {
+        title: "Speelstijlsamenvatting",
+        indicator: "Middel",
+        indicatorNote: "Analyse gebaseerd op 4 beschikbare wedstrijden.",
+        findings: [
+          {
+            text: "Italië toont een gedisciplineerde verdedigende basishouding met een compact laag blok en een goed georganiseerde middenlinie. Na balwinst zoekt de ploeg snel de diepte via lange ballen op de aanvallers.",
+            bronnen: "26-3-2025 (Duitsland), 23-3-2025 (Litouwen), 15-11-2024 (België)"
+          },
+          {
+            text: "Aanvallend is er een sterke nadruk op balbehoud in de opbouwfase, maar beperkte creativiteit in de laatste linie. Gemiddeld 8.4 kansen per wedstrijd, waarvan slechts 2.1 als clear chance worden geclassificeerd.",
+            bronnen: "23-3-2025 (Litouwen), 15-11-2024 (België), 14-10-2024 (Israël)"
+          }
+        ],
+        disclaimer: "Bevindingen zijn gebaseerd op event data en bedoeld als startpunt voor verdere analyse. Het professionele oordeel van de scout blijft leidend."
+      },
+      {
+        title: "Sterktes per spelfase",
+        indicator: "Middel",
+        indicatorNote: "Gebaseerd op 3 van 4 wedstrijden; gedeeltelijk incompleet.",
+        findings: [
+          {
+            label: "Verdedigende organisatie",
+            text: "Sterk georganiseerd laag blok: gemiddeld slechts 6.8 tegenaanvallen toegestaan per wedstrijd. Hoog percentage gewonnen tackles in de defensieve helft (68%).",
+            bronnen: "26-3-2025 (Duitsland), 15-11-2024 (België), 14-10-2024 (Israël)"
+          },
+          {
+            label: "Standaardsituaties verdedigend",
+            text: "Effectief in het verdedigen van corners: slechts 1 tegendoelpunt uit standaardsituaties in de geselecteerde wedstrijden.",
+            bronnen: "26-3-2025 (Duitsland), 23-3-2025 (Litouwen)"
+          }
+        ],
+        disclaimer: "Bevindingen zijn gebaseerd op event data en bedoeld als startpunt voor verdere analyse. Het professionele oordeel van de scout blijft leidend."
+      },
+      {
+        title: "Zwaktes per spelfase",
+        indicator: "Middel",
+        indicatorNote: "Conclusies zijn indicatief op basis van 4 wedstrijden.",
+        findings: [
+          {
+            label: "Aanvallende opbouw",
+            text: "Beperkte doelgevaarcreatie vanuit lopende aanvallen: gemiddeld 2.1 clear chances per 90 minuten — ondergemiddeld voor WK-kwalificatieniveau.",
+            bronnen: "26-3-2025 (Duitsland), 23-3-2025 (Litouwen), 15-11-2024 (België)"
+          }
+        ],
+        disclaimer: "Bevindingen zijn gebaseerd op event data en bedoeld als startpunt voor verdere analyse. Het professionele oordeel van de scout blijft leidend."
+      },
+      {
+        title: "Tactische aandachtspunten",
+        indicator: "Laag",
+        unavailable: true,
+        unavailableText: "Deze sectie kan niet worden onderbouwd op basis van de beschikbare data. Aanbeveling: aanvullen via video-analyse.",
+        unavailableNote: "Onvoldoende wedstrijddata beschikbaar voor het identificeren van betrouwbare patronen. Extra wedstrijden of aanvullende video-analyse zijn noodzakelijk."
+      },
+      {
+        title: "Datalimitaties en aanbevelingen voor aanvullende analyse",
+        indicator: "Laag",
+        unavailable: true,
+        unavailableText: "Deze sectie kan niet worden onderbouwd op basis van de beschikbare data. Aanbeveling: aanvullen via video-analyse.",
+        unavailableNote: "Slechts 4 wedstrijden beschikbaar in het datawarehouse. Pressing-statistieken per zone ontbreken geheel. Spelersdata is incompleet voor 2 van 4 wedstrijden."
+      }
+    ]
+  },
 
-    function renderScenario(key) {
-      const scenario = scenarios[key];
-      title.textContent = scenario.title;
-      audience.textContent = scenario.audience;
-      recommendation.textContent = scenario.recommendation;
-      nextStep.textContent = scenario.nextStep;
-      evidence.innerHTML = scenario.evidence.map((item, index) => `
-        <article class="evidence-item">
-          <span>Evidence ${index + 1}</span>
-          <p>${item}</p>
-        </article>
+  armenie: {
+    label: "Armenië",
+    matches: [
+      { date: "23 maart 2025", opp: "Kroatië",   comp: "WK-kwalificatie", result: "0–2" },
+      { date: "20 maart 2025", opp: "Hongarije", comp: "WK-kwalificatie", result: "1–1" }
+    ],
+    sections: [
+      {
+        title: "Speelstijlsamenvatting",
+        indicator: "Laag",
+        indicatorNote: "Analyse gebaseerd op slechts 2 wedstrijden — bevindingen zijn speculatief.",
+        findings: [
+          {
+            text: "Op basis van de beschikbare data hanteert Armenië een defensief georiënteerde basishouding met een laag blok. Aanvallend is de data onvoldoende om betrouwbare patronen te identificeren.",
+            bronnen: "23-3-2025 (Kroatië), 20-3-2025 (Hongarije)"
+          }
+        ],
+        disclaimer: "Bevindingen zijn gebaseerd op event data en bedoeld als startpunt voor verdere analyse. Het professionele oordeel van de scout blijft leidend."
+      },
+      {
+        title: "Sterktes per spelfase",
+        indicator: "Laag",
+        unavailable: true,
+        unavailableText: "Deze sectie kan niet worden onderbouwd op basis van de beschikbare data. Aanbeveling: aanvullen via video-analyse.",
+        unavailableNote: "Onvoldoende wedstrijddata (2 wedstrijden) voor het identificeren van sterktes per spelfase."
+      },
+      {
+        title: "Zwaktes per spelfase",
+        indicator: "Laag",
+        unavailable: true,
+        unavailableText: "Deze sectie kan niet worden onderbouwd op basis van de beschikbare data. Aanbeveling: aanvullen via video-analyse.",
+        unavailableNote: "Onvoldoende wedstrijddata (2 wedstrijden) voor het identificeren van zwaktes per spelfase."
+      },
+      {
+        title: "Tactische aandachtspunten",
+        indicator: "Laag",
+        unavailable: true,
+        unavailableText: "Deze sectie kan niet worden onderbouwd op basis van de beschikbare data. Aanbeveling: aanvullen via video-analyse.",
+        unavailableNote: "Onvoldoende data voor het formuleren van betrouwbare tactische aandachtspunten."
+      },
+      {
+        title: "Datalimitaties en aanbevelingen voor aanvullende analyse",
+        indicator: "Laag",
+        unavailable: true,
+        unavailableText: "Deze sectie kan niet worden onderbouwd op basis van de beschikbare data. Aanbeveling: aanvullen via video-analyse.",
+        unavailableNote: "Slechts 2 wedstrijden beschikbaar. Alle event-datatypes zijn incompleet. Video-analyse wordt sterk aanbevolen als aanvulling voor wedstrijdvoorbereiding."
+      }
+    ]
+  }
+};
+
+// ============================================================
+// SCREEN NAVIGATION
+// ============================================================
+
+let selectedOpponent = null;
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+const opponentSelect = document.getElementById("opponent-select");
+const startBtn = document.getElementById("start-btn");
+
+opponentSelect.addEventListener("change", () => {
+  startBtn.disabled = !opponentSelect.value;
+});
+
+document.getElementById("select-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  selectedOpponent = opponentSelect.value;
+  if (!selectedOpponent) return;
+  startProgress();
+});
+
+document.getElementById("btn-back").addEventListener("click", () => {
+  showScreen("screen-select");
+  opponentSelect.value = "";
+  startBtn.disabled = true;
+});
+
+[document.getElementById("btn-export"), document.getElementById("btn-export-2")].forEach(btn => {
+  btn.addEventListener("click", () => window.print());
+});
+
+// ============================================================
+// PROGRESS ANIMATION
+// ============================================================
+
+function startProgress() {
+  showScreen("screen-progress");
+
+  const opp = OPPONENTS[selectedOpponent];
+  document.getElementById("progress-label").textContent = `Tegenstander: ${opp.label}`;
+
+  const steps = ["step-1", "step-2", "step-3", "step-4"].map(id => document.getElementById(id));
+
+  steps.forEach(s => {
+    s.classList.remove("active", "done");
+    s.querySelector(".step-icon").textContent = "○";
+  });
+
+  const activeTimes = [0,    800,  1700, 2600];
+  const doneTimes   = [700, 1600,  2500, 3300];
+
+  steps.forEach((step, i) => {
+    setTimeout(() => {
+      step.classList.add("active");
+      step.querySelector(".step-icon").textContent = "◎";
+    }, activeTimes[i]);
+
+    setTimeout(() => {
+      step.classList.remove("active");
+      step.classList.add("done");
+      step.querySelector(".step-icon").textContent = "✓";
+    }, doneTimes[i]);
+  });
+
+  setTimeout(() => {
+    renderReport(selectedOpponent);
+    showScreen("screen-report");
+  }, 3700);
+}
+
+// ============================================================
+// REPORT RENDERING
+// ============================================================
+
+function badge(level) {
+  const cls = { Hoog: "badge-hoog", Middel: "badge-middel", Laag: "badge-laag" };
+  return `<span class="badge ${cls[level] || "badge-laag"}">${level}</span>`;
+}
+
+function renderReport(key) {
+  const opp = OPPONENTS[key];
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" });
+  const isoDate = now.toISOString().slice(0, 10);
+
+  document.getElementById("report-heading").textContent = opp.label;
+  document.getElementById("report-meta").textContent =
+    `Team DNA — KNVB · Gegenereerd op ${dateStr} · ${opp.matches.length} wedstrijden geanalyseerd`;
+  document.getElementById("report-footer-meta").textContent =
+    `TeamDNA_${opp.label}_${isoDate} · Team DNA — Koninklijke Nederlandse Voetbalbond`;
+
+  const container = document.getElementById("report-content");
+  container.innerHTML = "";
+
+  // Wedstrijdoverzicht
+  const matchRows = opp.matches.map(m => `
+    <div class="match-row">
+      <span class="match-date">${m.date}</span>
+      <span class="match-opp">${opp.label} – ${m.opp} <span style="color:var(--muted);font-size:0.82em">(${m.result})</span></span>
+      <span class="match-comp">${m.comp}</span>
+    </div>
+  `).join("");
+
+  container.innerHTML += `
+    <div class="report-section">
+      <div class="section-header">
+        <h2 class="section-title">Wedstrijdoverzicht</h2>
+        ${badge("Hoog")}
+      </div>
+      <div class="section-body">
+        <div class="matches-list">${matchRows}</div>
+      </div>
+      <div class="section-disclaimer">Dit overzicht toont de bronset die door de hele analysepipeline is gebruikt.</div>
+    </div>
+  `;
+
+  // Remaining sections
+  opp.sections.forEach(sec => {
+    const noteHTML = sec.indicatorNote
+      ? `<span class="section-note">${sec.indicatorNote}</span>` : "";
+
+    let bodyHTML;
+    if (sec.unavailable) {
+      bodyHTML = `
+        <div class="unavail-body">
+          ${sec.unavailableText}
+          ${sec.unavailableNote ? `<p class="unavail-note">${sec.unavailableNote}</p>` : ""}
+        </div>
+      `;
+    } else {
+      const findingsHTML = sec.findings.map(f => `
+        <div class="finding">
+          ${f.label ? `<div class="finding-label">${f.label}</div>` : ""}
+          <p class="finding-text">${f.text}</p>
+          <div class="bron">${f.bronnen}</div>
+        </div>
       `).join("");
-      feedbackStatus.textContent = "";
-      document.querySelectorAll("[data-feedback]").forEach((button) => {
-        button.classList.remove("selected");
-      });
+      bodyHTML = `<div class="section-body">${findingsHTML}</div>`;
     }
 
-    scenarioInput.addEventListener("change", () => {
-      const starterText = {
-        match: "City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.",
-        student: "The student has a broad AI idea and needs a quick prototype journey to test with peers.",
-        support: "Three customers report login confusion after the onboarding email. The support lead wants a clear triage view."
-      };
-      contextInput.value = starterText[scenarioInput.value];
-      renderScenario(scenarioInput.value);
-    });
+    const disclaimerHTML = sec.disclaimer
+      ? `<div class="section-disclaimer">${sec.disclaimer}</div>` : "";
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      renderScenario(scenarioInput.value);
-    });
+    container.innerHTML += `
+      <div class="report-section">
+        <div class="section-header">
+          <h2 class="section-title">${sec.title}</h2>
+          ${badge(sec.indicator)}
+          ${noteHTML}
+        </div>
+        ${bodyHTML}
+        ${disclaimerHTML}
+      </div>
+    `;
+  });
 
-    document.querySelectorAll("[data-feedback]").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll("[data-feedback]").forEach((item) => {
-          item.classList.remove("selected");
-        });
-        button.classList.add("selected");
-        feedbackStatus.textContent = `Feedback captured: ${button.dataset.feedback}`;
-      });
-    });
-
-    renderScenario("match");
-  </script>
+  // Scroll to top
+  window.scrollTo(0, 0);
+}
+</script>
 </body>
 </html>

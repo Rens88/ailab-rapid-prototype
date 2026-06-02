@@ -1,0 +1,13 @@
+opponent_name,match_date,match_opponent,competition,result,possession_pct,ppda,right_flank_pct,left_flank_pct,clear_chances,interceptions,tackle_pct,transitions_conceded,set_piece_shots,data_complete
+Engeland,2025-04-04,Nederland,WK-kwalificatie,1-0,58,6.1,44,20,3,4.5,71,3.2,2.3,True
+Engeland,2025-03-22,Albanië,WK-kwalificatie,2-0,63,5.8,42,22,4,4.1,74,2.7,2.1,True
+Engeland,2025-03-19,Letland,WK-kwalificatie,3-1,67,6.5,40,24,5,4.3,76,2.1,1.8,True
+Engeland,2024-11-14,Noorwegen,Vriendschappelijk,2-1,55,6.0,43,21,3,4.7,69,3.5,2.2,True
+Engeland,2024-10-10,Griekenland,UEFA Nations League,2-1,61,6.3,41,23,3,3.9,73,3.1,2.4,False
+Engeland,2024-10-07,Finland,UEFA Nations League,3-1,64,6.4,44,21,4,4.0,75,2.4,1.9,False
+Italië,2025-03-26,Duitsland,WK-kwalificatie,1-1,52,8.2,35,28,2,5.1,68,1.8,1.4,True
+Italië,2025-03-23,Litouwen,WK-kwalificatie,2-0,59,7.8,38,26,3,4.8,71,1.5,2.1,True
+Italië,2024-11-15,België,UEFA Nations League,1-0,48,9.1,33,30,2,5.3,69,1.2,1.6,False
+Italië,2024-10-14,Israël,UEFA Nations League,4-1,55,7.5,36,27,4,4.5,72,2.8,2.3,False
+Armenië,2025-03-23,Kroatië,WK-kwalificatie,0-2,38,14.2,28,31,1,3.2,58,4.1,0.8,True
+Armenië,2025-03-20,Hongarije,WK-kwalificatie,1-1,42,12.8,30,29,1,3.5,61,3.8,0.6,True
