@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prototype Shell</title>
+  <title>AI Sparringpartner — Talentcoaches</title>
   <style>
     :root {
       --ink: #17211d;
@@ -14,400 +14,1010 @@
       --field: #f1eee6;
       --green: #1f6f54;
       --green-dark: #154838;
+      --green-light: #e8f2ee;
       --gold: #d89b27;
-      --coral: #d85f45;
-      --shadow: 0 18px 50px rgba(38, 35, 27, 0.14);
+      --shadow: 0 4px 24px rgba(38, 35, 27, 0.12);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      margin: 0;
       min-height: 100vh;
       color: var(--ink);
       font-family: Georgia, "Times New Roman", serif;
       background:
-        linear-gradient(135deg, rgba(31, 111, 84, 0.12), transparent 35%),
-        radial-gradient(circle at 85% 10%, rgba(216, 155, 39, 0.18), transparent 32%),
+        linear-gradient(135deg, rgba(31, 111, 84, 0.08), transparent 40%),
         var(--paper);
     }
 
-    button,
-    select,
-    textarea {
-      font: inherit;
+    button { font: inherit; cursor: pointer; }
+    textarea { font: inherit; }
+
+    /* ── SCREEN SYSTEM ── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ── ONBOARDING ── */
+    #screen-onboarding {
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
     }
 
-    .page {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 34px 0 44px;
-    }
-
-    header {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 28px;
-      align-items: end;
-      padding: 28px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    h1 {
-      margin: 0;
-      max-width: 760px;
-      font-size: clamp(2.2rem, 6vw, 5.2rem);
-      line-height: 0.94;
-      letter-spacing: 0;
-    }
-
-    .intro {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.5;
-    }
-
-    .workspace {
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 18px;
-      margin-top: 24px;
-    }
-
-    .panel {
-      background: rgba(255, 255, 255, 0.82);
+    .onboarding-card {
+      width: min(480px, 100%);
+      background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 12px;
       box-shadow: var(--shadow);
+      padding: 32px 28px 28px;
     }
 
-    .controls {
-      padding: 18px;
-    }
-
-    label {
-      display: block;
-      margin: 0 0 8px;
+    .logo-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
 
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--field);
-      color: var(--ink);
-      padding: 12px;
+    .logo-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
     }
 
-    textarea {
-      min-height: 108px;
-      resize: vertical;
-      line-height: 1.45;
-    }
-
-    .field {
+    .onboarding-card h1 {
+      font-size: clamp(1.7rem, 5vw, 2.2rem);
+      line-height: 1.1;
       margin-bottom: 16px;
     }
 
-    .primary {
-      width: 100%;
-      border: 0;
-      border-radius: 6px;
-      background: var(--green);
-      color: white;
-      padding: 13px 16px;
-      cursor: pointer;
-    }
-
-    .primary:hover {
-      background: var(--green-dark);
-    }
-
-    .output {
-      min-height: 520px;
-      padding: 22px;
-      display: grid;
-      gap: 18px;
-    }
-
-    .result-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: flex-start;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid rgba(31, 111, 84, 0.3);
-      border-radius: 999px;
-      color: var(--green-dark);
-      padding: 6px 10px;
-      font-size: 0.86rem;
-      white-space: nowrap;
-    }
-
-    h2,
-    h3 {
-      margin: 0;
-      letter-spacing: 0;
-    }
-
-    h2 {
-      font-size: clamp(1.6rem, 3vw, 2.6rem);
-      line-height: 1.02;
-    }
-
-    h3 {
-      font-size: 1.05rem;
-    }
-
-    .recommendation {
-      margin: 0;
-      font-size: 1.28rem;
-      line-height: 1.42;
-    }
-
-    .evidence {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .evidence-item {
-      min-height: 132px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #fbfaf6;
-      padding: 14px;
-    }
-
-    .evidence-item span {
-      display: block;
-      color: var(--coral);
-      font-size: 0.8rem;
+    .onboarding-intro {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.97rem;
       margin-bottom: 8px;
     }
 
-    .evidence-item p {
-      margin: 0;
+    .privacy-note {
+      font-size: 0.84rem;
       color: var(--muted);
-      line-height: 1.42;
-    }
-
-    .next-step,
-    .feedback {
-      border-top: 1px solid var(--line);
-      padding-top: 16px;
-    }
-
-    .next-step p {
-      margin: 8px 0 0;
-      color: var(--muted);
+      border-left: 2px solid var(--line);
+      padding-left: 10px;
+      margin: 16px 0 24px;
       line-height: 1.45;
     }
 
-    .feedback-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
+    .example-qs-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
     }
 
-    .feedback button {
+    .example-qs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .example-q {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 11px 14px;
+      text-align: left;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .example-q:hover {
+      background: var(--green-light);
+      border-color: rgba(31, 111, 84, 0.35);
+    }
+
+    .btn-start {
+      width: 100%;
+      background: var(--green);
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 1rem;
+      transition: background 0.15s;
+    }
+
+    .btn-start:hover { background: var(--green-dark); }
+
+    .institution-note {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ── CHAT ── */
+    #screen-chat {
+      max-width: 680px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .chat-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(247, 244, 236, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    .chat-title { font-size: 0.95rem; }
+    .chat-subtitle { font-size: 0.78rem; color: var(--muted); }
+
+    .header-actions { display: flex; gap: 8px; }
+
+    .icon-btn {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--muted);
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+
+    .icon-btn:hover { background: var(--green-light); color: var(--green-dark); }
+
+    .chat-messages {
+      flex: 1;
+      padding: 20px 16px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 88%;
+    }
+
+    .msg-user { align-self: flex-end; align-items: flex-end; }
+    .msg-ai   { align-self: flex-start; align-items: flex-start; }
+
+    .msg-label {
+      font-size: 0.74rem;
+      color: var(--muted);
+      padding: 0 4px;
+    }
+
+    .msg-bubble {
+      border-radius: 12px;
+      padding: 12px 16px;
+      line-height: 1.52;
+      font-size: 0.93rem;
+    }
+
+    .msg-user .msg-bubble {
+      background: var(--green);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-ai .msg-bubble {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-bubble p  { margin: 0 0 10px; }
+    .msg-bubble p:last-child { margin-bottom: 0; }
+    .msg-bubble ol,
+    .msg-bubble ul { padding-left: 18px; margin: 8px 0; }
+    .msg-bubble li { margin-bottom: 4px; }
+    .msg-bubble em { font-style: italic; }
+
+    .msg-actions { display: flex; gap: 6px; padding: 0 4px; }
+
+    .tts-btn {
       border: 1px solid var(--line);
       border-radius: 999px;
-      background: #fbfaf6;
-      color: var(--ink);
-      padding: 9px 12px;
+      background: transparent;
+      color: var(--muted);
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      transition: background 0.15s;
+    }
+
+    .tts-btn:hover { background: var(--green-light); color: var(--green-dark); }
+    .tts-btn.speaking { background: var(--green-light); color: var(--green-dark); border-color: rgba(31,111,84,0.4); }
+
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+    }
+
+    .typing-dots { display: flex; gap: 4px; }
+
+    .typing-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+      animation: bounce 1.2s ease-in-out infinite;
+    }
+
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30%           { transform: translateY(-5px); }
+    }
+
+    .privacy-nudge {
+      background: rgba(216, 155, 39, 0.12);
+      border: 1px solid rgba(216, 155, 39, 0.35);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.83rem;
+      line-height: 1.45;
+      align-self: center;
+      max-width: 90%;
+    }
+
+    .chat-input-area {
+      position: sticky;
+      bottom: 0;
+      background: rgba(247, 244, 236, 0.97);
+      backdrop-filter: blur(8px);
+      border-top: 1px solid var(--line);
+      padding: 12px 16px 16px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .chat-textarea {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      padding: 11px 14px;
+      resize: none;
+      line-height: 1.45;
+      font-size: 0.93rem;
+      min-height: 46px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .chat-textarea:focus {
+      outline: 2px solid rgba(31, 111, 84, 0.4);
+      border-color: var(--green);
+    }
+
+    .mic-btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--muted);
+      padding: 11px 13px;
+      font-size: 1.1rem;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .mic-btn:hover { background: var(--green-light); color: var(--green-dark); }
+    .mic-btn.listening { background: rgba(216, 155, 39, 0.18); color: var(--green-dark); }
+
+    .send-btn {
+      border: 0;
+      border-radius: 10px;
+      background: var(--green);
+      color: white;
+      padding: 11px 15px;
+      font-size: 1rem;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .send-btn:hover { background: var(--green-dark); }
+    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .input-hint {
+      font-size: 0.74rem;
+      color: var(--muted);
+      margin-top: 7px;
+      text-align: center;
+    }
+
+    .input-hint-link {
+      border: none;
+      background: none;
+      padding: 0;
+      font-size: 0.74rem;
+      color: var(--muted);
       cursor: pointer;
+      text-decoration: underline;
     }
 
-    .feedback button.selected {
-      border-color: var(--gold);
-      background: rgba(216, 155, 39, 0.16);
+    /* ── SUMMARY ── */
+    #screen-summary {
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
     }
 
-    .status {
-      min-height: 22px;
-      margin-top: 10px;
+    .summary-card {
+      width: min(520px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .summary-card h2 { font-size: 1.4rem; margin-bottom: 6px; }
+
+    .summary-subtitle {
+      color: var(--muted);
+      font-size: 0.86rem;
+      margin-bottom: 20px;
+    }
+
+    .summary-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .summary-items li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 11px 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .summary-num {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--green);
+      color: white;
+      font-size: 0.74rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .summary-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      color: var(--ink);
+      padding: 12px;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+
+    .btn-secondary:hover { background: var(--green-light); }
+
+    .btn-primary {
+      flex: 1;
+      border: 0;
+      border-radius: 8px;
+      background: var(--green);
+      color: white;
+      padding: 12px;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+
+    .btn-primary:hover { background: var(--green-dark); }
+
+    .copy-confirm {
+      font-size: 0.8rem;
       color: var(--green-dark);
-      font-size: 0.95rem;
+      text-align: center;
+      margin-top: 8px;
+      min-height: 18px;
     }
 
-    @media (max-width: 820px) {
-      header,
-      .workspace {
-        grid-template-columns: 1fr;
-      }
+    /* ── PRIVACY MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(23, 33, 29, 0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
 
-      .output {
-        min-height: auto;
-      }
+    .modal-overlay.open { display: flex; }
 
-      .result-top {
-        display: grid;
-      }
+    .modal {
+      width: min(460px, 100%);
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 26px 24px;
+      box-shadow: var(--shadow);
+    }
 
-      .evidence {
-        grid-template-columns: 1fr;
-      }
+    .modal h3 { font-size: 1.1rem; margin-bottom: 14px; }
+
+    .modal-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      margin-bottom: 16px;
+    }
+
+    .modal-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      line-height: 1.4;
+    }
+
+    .modal-table td:first-child {
+      color: var(--muted);
+      width: 42%;
+      font-size: 0.82rem;
+    }
+
+    .modal-close {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      padding: 11px;
+      font-size: 0.9rem;
+      transition: background 0.15s;
+    }
+
+    .modal-close:hover { background: var(--green-light); }
+
+    /* ── RESPONSIVE 375px ── */
+    @media (max-width: 420px) {
+      .onboarding-card { padding: 24px 18px 20px; }
+      .chat-header { padding: 12px; }
+      .chat-messages { padding: 16px 12px 8px; }
+      .chat-input-area { padding: 10px 12px 14px; }
+      .msg { max-width: 94%; }
+      .summary-card { padding: 22px 18px; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <header>
-      <h1>Prototype Shell</h1>
-      <p class="intro">A standalone Phase 1 concept flow: pick a safe example, add a little context, generate a mocked recommendation, and capture feedback.</p>
+
+  <!-- ══════════ ONBOARDING ══════════ -->
+  <section class="screen active" id="screen-onboarding" aria-label="Introductie">
+    <div class="onboarding-card">
+      <div class="logo-mark">
+        <span class="logo-dot"></span>
+        Sportinnovator · Hanze
+      </div>
+
+      <h1>AI Sparring&shy;partner</h1>
+
+      <p class="onboarding-intro">
+        Stel je vraag over monitoring, trainingsbelasting of sporter-begeleiding — en krijg een doordacht perspectief terug.
+        Dit is een sparringpartner, geen orakel: jij neemt de beslissing, de AI denkt mee.
+        Geen persoonsgegevens invullen; beschrijf situaties in anonieme termen.
+      </p>
+
+      <div class="privacy-note">
+        Privacy: je invoer wordt niet gebruikt voor modeltraining. Vul geen namen of BSN in van sporters.
+      </div>
+
+      <p class="example-qs-label">Begin met een van deze vragen</p>
+
+      <div class="example-qs">
+        <button class="example-q" data-q="Mijn sporter geeft altijd een score tussen 4 en 7. Hoe interpreteer ik dat?">
+          Mijn sporter geeft altijd een score tussen 4 en 7. Hoe interpreteer ik dat?
+        </button>
+        <button class="example-q" data-q="Hoe zorg ik dat sporters goed blijven invullen zonder dat ik de politieagent hoef te spelen?">
+          Hoe zorg ik dat sporters goed blijven invullen zonder dat ik de politieagent hoef te spelen?
+        </button>
+        <button class="example-q" data-q="Ik heb morgen een 1-op-1 met een sporter. Welke vragen stel ik als de welzijnsscore de laatste twee weken dalende is?">
+          Ik heb morgen een 1-op-1. Welke vragen stel ik als de welzijnsscore de afgelopen twee weken daalt?
+        </button>
+        <button class="example-q" data-q="Hoe begin ik een goed gesprek over monitoring bij de start van het seizoen?">
+          Hoe begin ik een goed gesprek over monitoring bij de start van het seizoen?
+        </button>
+      </div>
+
+      <button class="btn-start" id="btn-start">Aan de slag</button>
+
+      <p class="institution-note">Hanzehogeschool Groningen · Lectoraat Sportinnovator · AI Impact Lab</p>
+    </div>
+  </section>
+
+  <!-- ══════════ CHAT ══════════ -->
+  <section class="screen" id="screen-chat" aria-label="Gesprek">
+    <header class="chat-header">
+      <div class="chat-header-left">
+        <span class="status-dot" aria-hidden="true"></span>
+        <div>
+          <div class="chat-title">AI Sparringpartner</div>
+          <div class="chat-subtitle">Talentcoach · Monitoring &amp; begeleiding</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btn-summary-header">Actiepunten</button>
+        <button class="icon-btn" id="btn-info">? Info</button>
+      </div>
     </header>
 
-    <section class="workspace" aria-label="Clickable prototype workspace">
-      <form class="panel controls" id="prototype-form">
-        <div class="field">
-          <label for="scenario">Example scenario</label>
-          <select id="scenario" name="scenario">
-            <option value="match">Match insight coach</option>
-            <option value="student">Student project helper</option>
-            <option value="support">Support triage assistant</option>
-          </select>
-        </div>
+    <div class="chat-messages" id="chat-messages" aria-live="polite" aria-label="Gesprekshistorie"></div>
 
-        <div class="field">
-          <label for="context">Context to include</label>
-          <textarea id="context" name="context">City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.</textarea>
-        </div>
+    <div class="chat-input-area">
+      <div class="input-row">
+        <textarea
+          id="chat-input"
+          class="chat-textarea"
+          placeholder="Stel een vraag over monitoring, planning of begeleiding..."
+          rows="1"
+          aria-label="Vraag aan AI sparringpartner"
+        ></textarea>
+        <button class="mic-btn" id="mic-btn" title="Spraakherkenning (demo)" aria-label="Spraak invoer">🎤</button>
+        <button class="send-btn" id="send-btn" aria-label="Verstuur" disabled>➤</button>
+      </div>
+      <p class="input-hint">
+        Geen namen of identificeerbare gegevens van sporters ·
+        <button class="input-hint-link" id="btn-info-2">privacyinfo</button>
+      </p>
+    </div>
+  </section>
 
-        <button class="primary" type="submit">Generate draft insight</button>
-      </form>
+  <!-- ══════════ SUMMARY ══════════ -->
+  <section class="screen" id="screen-summary" aria-label="Sessie samenvatting">
+    <div class="summary-card">
+      <h2>Actiepunten</h2>
+      <p class="summary-subtitle">Samenvatting van dit gesprek</p>
+      <ul class="summary-items" id="summary-list"></ul>
+      <div class="summary-actions">
+        <button class="btn-secondary" id="btn-copy">Kopieer tekst</button>
+        <button class="btn-secondary" id="btn-back-chat">← Terug naar gesprek</button>
+        <button class="btn-primary" id="btn-new">Nieuw gesprek</button>
+      </div>
+      <p class="copy-confirm" id="copy-confirm" aria-live="polite"></p>
+    </div>
+  </section>
 
-      <section class="panel output" aria-live="polite">
-        <div class="result-top">
-          <div>
-            <h2 id="result-title">Match Insight Coach</h2>
-            <p class="recommendation" id="recommendation">Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.</p>
-          </div>
-          <span class="tag" id="audience">Youth football coach</span>
-        </div>
-
-        <div class="evidence" id="evidence"></div>
-
-        <div class="next-step">
-          <h3>Suggested next step</h3>
-          <p id="next-step">Test this with one coach and ask whether the output changes the next training plan.</p>
-        </div>
-
-        <div class="feedback">
-          <h3>Was this useful?</h3>
-          <div class="feedback-row">
-            <button type="button" data-feedback="Useful">Useful</button>
-            <button type="button" data-feedback="Almost">Almost</button>
-            <button type="button" data-feedback="Not yet">Not yet</button>
-          </div>
-          <div class="status" id="feedback-status"></div>
-        </div>
-      </section>
-    </section>
-  </main>
+  <!-- ══════════ PRIVACY MODAL ══════════ -->
+  <div class="modal-overlay" id="modal-privacy" role="dialog" aria-modal="true" aria-label="Privacyinformatie">
+    <div class="modal">
+      <h3>Privacyinformatie</h3>
+      <table class="modal-table">
+        <tr><td>AI-model</td><td>Claude (Anthropic) via beveiligd platform</td></tr>
+        <tr><td>Verwerkingslocatie</td><td>EU-conform hosting (nader te bepalen — OB-01)</td></tr>
+        <tr><td>Retentietermijn</td><td>Sessie-gebonden; geen opslag na afsluiting (MVP)</td></tr>
+        <tr><td>Modeltraining</td><td>Invoer wordt <strong>niet</strong> gebruikt voor training</td></tr>
+        <tr><td>Persoonsgegevens</td><td>Voer geen namen, BSN of diagnoses in van sporters</td></tr>
+        <tr><td>Contactpersoon</td><td>Lectoraat Sportinnovator, Hanzehogeschool Groningen</td></tr>
+      </table>
+      <button class="modal-close" id="modal-close">Sluiten</button>
+    </div>
+  </div>
 
   <script>
-    const scenarios = {
-      match: {
-        title: "Match Insight Coach",
-        audience: "Youth football coach",
-        recommendation: "Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.",
-        evidence: [
-          "High shot volume with low shot accuracy.",
-          "Most chances came from wide areas.",
-          "Counters followed several midfield turnovers."
-        ],
-        nextStep: "Test this with one coach and ask whether the output changes the next training plan."
+    // ── MOCK RESPONSES ──
+    const RESPONSES = {
+      "score-range": {
+        trigger: /score.*[4-7]|[4-7].*score|altijd.*[4-9]|middenmarge|score.*band/i,
+        html: `<p>Interessant patroon. Een sporter die consistent in de middenmarge scoort vertelt je iets heel specifieks: hij of zij <strong>ijkt de schaal op jou</strong>, niet op zichzelf. De sporter past antwoorden aan op wat hij denkt dat jij wilt zien, of is simpelweg niet gewend om extreme waarden te gebruiken.</p>
+<p>Twee overwegingen:</p>
+<ol>
+  <li><strong>Trend is waardevoller dan absolute score</strong>: een 5 in week 1 heeft een heel andere betekenis dan een 5 na drie weken zware trainingsbelasting. Kijk naar de beweging, niet het getal.</li>
+  <li><strong>Kalibratiegesprek</strong>: vraag in een 1-op-1 wat een 4 versus een 7 concreet betekent voor déze sporter. Dat gesprek duurt 10 minuten en verandert je hele interpretatie.</li>
+</ol>
+<p>Wat speelt er verder bij deze sporter — sport, leeftijdscategorie, fase in het seizoen? Dan kan ik specifieker sparren.</p>`
       },
-      student: {
-        title: "Student Project Helper",
-        audience: "Workshop participant",
-        recommendation: "Turn the broad idea into a clickable flow that transforms one event goal into a draft task list and feedback prompt.",
-        evidence: [
-          "The idea is real but still broad.",
-          "The first prototype needs one clear journey.",
-          "Peer feedback is more useful than feature completeness."
-        ],
-        nextStep: "Show the shell to two peers before adding integrations."
+      "compliance": {
+        trigger: /politieagent|invull|compliance|niet invull|herinneringen?|motivat/i,
+        html: `<p>Het "politieagent-probleem" zit bijna altijd in de <strong>onboarding</strong>, niet in de handhaving. Als sporters niet weten wat jij doet met hun data, voelt het als controle.</p>
+<p>Drie dingen die in de praktijk werken:</p>
+<ol>
+  <li><strong>Eigenaarschap bij start</strong>: bespreek gezamenlijk welke vragen jullie stellen en waarom. Sporters die meebeslissen vullen structureel beter in.</li>
+  <li><strong>Peer accountability</strong>: laat de captain of een klein groepje de invulstatus bijhouden — dat werkt beter dan jij als coach die eraan herinnert.</li>
+  <li><strong>Terugkoppeling zichtbaar maken</strong>: geef elke twee weken een beknopte terugkoppeling, ook aan de "stabiele invullers". Eén atleet die zegt "hij doet er toch niks mee" ondermijnt het hele team.</li>
+</ol>
+<p>Hoe ziet je huidige onboarding eruit? Dan kan ik gerichter sparren.</p>`
       },
-      support: {
-        title: "Support Triage Assistant",
-        audience: "Customer support lead",
-        recommendation: "Create a triage summary with likely cause, sample reply, and one product question for the onboarding team.",
-        evidence: [
-          "Several customers report confusion at the same step.",
-          "The issue affects new users before activation.",
-          "Support notes contain enough detail for a mocked recommendation."
-        ],
-        nextStep: "Ask a support lead if the evidence shown is enough to trust the recommendation."
+      "1on1": {
+        trigger: /1-op-1|een.op.een|gesprek.*welzijn|welzijn.*gesprek|dalend|voorbereiding.*gesprek|morgen.*gesprek/i,
+        html: `<p>Goede voorbereiding. Twee weken dalende welzijn is een <strong>aanleiding voor een gesprek</strong>, geen signaal om meteen de training aan te passen.</p>
+<p>Drie vragen om voor te bereiden:</p>
+<ol>
+  <li><strong>Open ingang</strong>: "Ik zie de laatste twee weken een beweging in je scores. Hoe gaat het met je?" — begin niet met de data, maar met de sporter.</li>
+  <li><strong>Verkennen</strong>: "Is dit iets wat je zelf ook merkt, of viel het je niet op?" — dit geeft je informatie over zelf-inzicht en openheid.</li>
+  <li><strong>Context vragen</strong>: "Is er iets buiten de sport wat meespeelt?" — welzijn is zelden alleen trainings-gerelateerd.</li>
+</ol>
+<p>Wat <em>niet</em> doen: direct een trainingsaanpassing voorstellen voordat je het gesprek hebt gehad. Dat ondermijnt het vertrouwen.</p>
+<p>Wil je sparren over een specifiek scenario — bijv. als de sporter zegt dat het goed gaat maar de scores iets anders vertellen?</p>`
+      },
+      "season-start": {
+        trigger: /start.*seizoen|seizoen.*start|nieuw seizoen|begin.*monitoring|onboarding.*sporter|sporters.*uitleggen|hoe.*gesprek.*monitoring/i,
+        html: `<p>Het eerste gesprek over monitoring <strong>zet de toon voor het hele seizoen</strong>. Behandel het als een gezamenlijk besluit, niet als een aankondiging.</p>
+<p>Structuur voor dat gesprek (20–30 min):</p>
+<ol>
+  <li><strong>Waarom monitoren we?</strong> Leg uit dat het voor <em>hen</em> werkt, niet alleen voor jou als coach.</li>
+  <li><strong>Wat meten we?</strong> Laat ze de vragen zien voordat ze ze voor het eerst invullen.</li>
+  <li><strong>Wat doe jij ermee?</strong> Wees concreet: "Als ik een lage score zie, kom ik naar je toe — niet om te straffen, maar om te begrijpen."</li>
+  <li><strong>Wat krijgen zij terug?</strong> Beloof een terugkoppelmoment en houd je eraan.</li>
+</ol>
+<p>Werkt je team met een specifiek platform of een eigen vragenlijst? Dan kan ik de aanpak verder aanscherpen.</p>`
+      },
+      "fallback": {
+        trigger: /.*/,
+        html: `<p>Dat is een vraag die ik graag verder verken. Kun je iets meer context geven — om welke sport gaat het, en in welke fase van het seizoen zitten jullie?</p>
+<p>Als je vraag gaat over een medisch aspect of blessurerisico, verwijs ik je door naar een sportarts of fysiotherapeut — dat valt buiten wat ik betrouwbaar kan beantwoorden.</p>
+<p>Wat is de kern van je coachvraag?</p>`
       }
     };
 
-    const form = document.querySelector("#prototype-form");
-    const scenarioInput = document.querySelector("#scenario");
-    const contextInput = document.querySelector("#context");
-    const title = document.querySelector("#result-title");
-    const audience = document.querySelector("#audience");
-    const recommendation = document.querySelector("#recommendation");
-    const evidence = document.querySelector("#evidence");
-    const nextStep = document.querySelector("#next-step");
-    const feedbackStatus = document.querySelector("#feedback-status");
+    const SUMMARY_TEMPLATES = {
+      "score-range": [
+        "Trend in scores is waardevoller dan absolute scores — kijk naar de beweging, niet het getal.",
+        "Plan een kalibratiegesprek: vraag wat een lage versus hoge score concreet betekent voor déze sporter.",
+        "Mogelijke verklaring: sporter ijkt scores op wat de coach wil zien, niet op eigen gevoel."
+      ],
+      "compliance": [
+        "Compliance begint bij de onboarding — bespreek samen wat je meet en waarom.",
+        "Peer accountability (captain-model) werkt beter dan coach die herinnert aan invullen.",
+        "Geef elke twee weken terugkoppeling, ook aan de stabiele invullers.",
+        "Overweeg: minder vragen, vaste momenten gekoppeld aan bestaande routine."
+      ],
+      "1on1": [
+        "Twee weken dalende scores = aanleiding voor gesprek, niet direct trainingsaanpassing.",
+        "Open het gesprek met de sporter, niet met de data.",
+        "Vraag expliciet of er factoren buiten de sport meespelen.",
+        "Stel geen trainingswijziging voor voordat je het gesprek hebt gehad."
+      ],
+      "season-start": [
+        "Behandel de monitoring-introductie als gezamenlijk besluit, niet als aankondiging.",
+        "Laat sporters de vragen zien voordat ze voor het eerst invullen.",
+        "Wees concreet over wat jij doet met hun data.",
+        "Beloof een terugkoppelmoment en houd je eraan — dit bepaalt de compliance voor het hele seizoen."
+      ],
+      "fallback": [
+        "Gesprek gevoerd over een coachvraag rondom monitoring en sporterbegeleiding.",
+        "Stel een vervolgvraag met meer context over sport en fase in het seizoen.",
+        "Bij medische of blessurevragen: raadpleeg een sportarts of fysiotherapeut."
+      ]
+    };
 
-    function renderScenario(key) {
-      const scenario = scenarios[key];
-      title.textContent = scenario.title;
-      audience.textContent = scenario.audience;
-      recommendation.textContent = scenario.recommendation;
-      nextStep.textContent = scenario.nextStep;
-      evidence.innerHTML = scenario.evidence.map((item, index) => `
-        <article class="evidence-item">
-          <span>Evidence ${index + 1}</span>
-          <p>${item}</p>
-        </article>
-      `).join("");
-      feedbackStatus.textContent = "";
-      document.querySelectorAll("[data-feedback]").forEach((button) => {
-        button.classList.remove("selected");
-      });
+    // ── STATE ──
+    let currentTopicKey = "fallback";
+    let isTyping = false;
+    let privacyNudgeDone = false;
+    let activeTTSBtn = null;
+
+    // ── SCREEN NAVIGATION ──
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
     }
 
-    scenarioInput.addEventListener("change", () => {
-      const starterText = {
-        match: "City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.",
-        student: "The student has a broad AI idea and needs a quick prototype journey to test with peers.",
-        support: "Three customers report login confusion after the onboarding email. The support lead wants a clear triage view."
-      };
-      contextInput.value = starterText[scenarioInput.value];
-      renderScenario(scenarioInput.value);
+    // ── ONBOARDING ──
+    document.getElementById("btn-start").addEventListener("click", () => {
+      showScreen("screen-chat");
+      document.getElementById("chat-input").focus();
     });
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      renderScenario(scenarioInput.value);
-    });
-
-    document.querySelectorAll("[data-feedback]").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll("[data-feedback]").forEach((item) => {
-          item.classList.remove("selected");
-        });
-        button.classList.add("selected");
-        feedbackStatus.textContent = `Feedback captured: ${button.dataset.feedback}`;
+    document.querySelectorAll(".example-q").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const q = btn.dataset.q;
+        showScreen("screen-chat");
+        document.getElementById("chat-input").value = q;
+        autoResize(document.getElementById("chat-input"));
+        document.getElementById("send-btn").disabled = false;
+        setTimeout(() => sendMessage(q), 180);
       });
     });
 
-    renderScenario("match");
+    // ── CHAT ──
+    function matchResponse(text) {
+      const t = text.toLowerCase();
+      for (const [key, resp] of Object.entries(RESPONSES)) {
+        if (key === "fallback") continue;
+        if (resp.trigger.test(t)) return { key, html: resp.html };
+      }
+      return { key: "fallback", html: RESPONSES.fallback.html };
+    }
+
+    function looksLikeName(text) {
+      // Heuristic: capital word that isn't first word of the message
+      return /\s[A-Z][a-z]{2,}/.test(text);
+    }
+
+    function addMessage(role, htmlContent) {
+      const container = document.getElementById("chat-messages");
+
+      const wrapper = document.createElement("div");
+      wrapper.className = `msg msg-${role}`;
+
+      const label = document.createElement("div");
+      label.className = "msg-label";
+      label.textContent = role === "user" ? "Jij" : "AI Sparringpartner";
+      wrapper.appendChild(label);
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+      bubble.innerHTML = htmlContent;
+      wrapper.appendChild(bubble);
+
+      if (role === "ai") {
+        const actions = document.createElement("div");
+        actions.className = "msg-actions";
+        const ttsBtn = document.createElement("button");
+        ttsBtn.className = "tts-btn";
+        ttsBtn.textContent = "▶ Voorlezen";
+        ttsBtn.addEventListener("click", () => toggleTTS(ttsBtn, bubble.innerText));
+        actions.appendChild(ttsBtn);
+        wrapper.appendChild(actions);
+      }
+
+      container.appendChild(wrapper);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function addPrivacyNudge() {
+      if (privacyNudgeDone) return;
+      privacyNudgeDone = true;
+      const container = document.getElementById("chat-messages");
+      const nudge = document.createElement("div");
+      nudge.className = "privacy-nudge";
+      nudge.textContent = "Let op: beschrijf sporters zonder naam of andere identificeerbare gegevens — bijv. 'een 17-jarige hockeyspeler' in plaats van een naam.";
+      container.appendChild(nudge);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function showTyping() {
+      const container = document.getElementById("chat-messages");
+      const el = document.createElement("div");
+      el.id = "typing-indicator";
+      el.className = "typing-indicator";
+      el.setAttribute("aria-label", "AI is aan het nadenken");
+      el.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+      container.appendChild(el);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById("typing-indicator");
+      if (el) el.remove();
+    }
+
+    function sendMessage(text) {
+      if (!text || !text.trim() || isTyping) return;
+      const t = text.trim();
+
+      const input = document.getElementById("chat-input");
+      input.value = "";
+      autoResize(input);
+      document.getElementById("send-btn").disabled = true;
+
+      addMessage("user", `<p>${escapeHtml(t)}</p>`);
+
+      if (looksLikeName(t)) addPrivacyNudge();
+
+      isTyping = true;
+      showTyping();
+
+      const delay = 1400 + Math.random() * 1600;
+      setTimeout(() => {
+        removeTyping();
+        isTyping = false;
+
+        const { key, html } = matchResponse(t);
+        currentTopicKey = key;
+        addMessage("ai", html);
+
+        document.getElementById("send-btn").disabled =
+          !document.getElementById("chat-input").value.trim();
+      }, delay);
+    }
+
+    document.getElementById("send-btn").addEventListener("click", () => {
+      sendMessage(document.getElementById("chat-input").value);
+    });
+
+    document.getElementById("chat-input").addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage(e.target.value);
+      }
+    });
+
+    document.getElementById("chat-input").addEventListener("input", function () {
+      autoResize(this);
+      document.getElementById("send-btn").disabled = !this.value.trim() || isTyping;
+    });
+
+    function autoResize(el) {
+      el.style.height = "auto";
+      el.style.height = Math.min(el.scrollHeight, 180) + "px";
+    }
+
+    // ── MIC (mocked) ──
+    document.getElementById("mic-btn").addEventListener("click", () => {
+      const btn = document.getElementById("mic-btn");
+      if (btn.classList.contains("listening")) return;
+
+      btn.classList.add("listening");
+      btn.textContent = "⏹ Luistert…";
+
+      setTimeout(() => {
+        btn.classList.remove("listening");
+        btn.textContent = "🎤";
+        const sample = "Hoe zorg ik dat sporters goed blijven invullen?";
+        const input = document.getElementById("chat-input");
+        input.value = sample;
+        autoResize(input);
+        document.getElementById("send-btn").disabled = false;
+        input.focus();
+      }, 2400);
+    });
+
+    // ── TTS ──
+    function toggleTTS(btn, text) {
+      if (!("speechSynthesis" in window)) {
+        btn.textContent = "TTS niet beschikbaar";
+        return;
+      }
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (activeTTSBtn) {
+          activeTTSBtn.textContent = "▶ Voorlezen";
+          activeTTSBtn.classList.remove("speaking");
+        }
+        if (activeTTSBtn === btn) { activeTTSBtn = null; return; }
+      }
+      const utt = new SpeechSynthesisUtterance(text);
+      utt.lang = "nl-NL";
+      utt.rate = 0.95;
+      utt.onend = utt.onerror = () => {
+        btn.textContent = "▶ Voorlezen";
+        btn.classList.remove("speaking");
+        activeTTSBtn = null;
+      };
+      btn.textContent = "⏹ Stop";
+      btn.classList.add("speaking");
+      activeTTSBtn = btn;
+      window.speechSynthesis.speak(utt);
+    }
+
+    // ── SUMMARY ──
+    function buildSummary() {
+      const items = SUMMARY_TEMPLATES[currentTopicKey] || SUMMARY_TEMPLATES.fallback;
+      document.getElementById("summary-list").innerHTML = items
+        .map((item, i) => `<li><span class="summary-num">${i + 1}</span><span>${item}</span></li>`)
+        .join("");
+    }
+
+    document.getElementById("btn-summary-header").addEventListener("click", () => {
+      buildSummary();
+      showScreen("screen-summary");
+    });
+
+    document.getElementById("btn-back-chat").addEventListener("click", () => {
+      showScreen("screen-chat");
+    });
+
+    document.getElementById("btn-copy").addEventListener("click", () => {
+      const items = document.querySelectorAll("#summary-list li span:last-child");
+      const text = Array.from(items).map((el, i) => `${i + 1}. ${el.textContent}`).join("\n");
+      const confirm = document.getElementById("copy-confirm");
+      navigator.clipboard.writeText(text)
+        .then(() => { confirm.textContent = "Tekst gekopieerd naar klembord."; })
+        .catch(() => { confirm.textContent = "Kopiëren niet beschikbaar in dit scherm."; });
+      setTimeout(() => { confirm.textContent = ""; }, 3000);
+    });
+
+    document.getElementById("btn-new").addEventListener("click", () => {
+      currentTopicKey = "fallback";
+      isTyping = false;
+      privacyNudgeDone = false;
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      document.getElementById("chat-messages").innerHTML = "";
+      document.getElementById("chat-input").value = "";
+      document.getElementById("send-btn").disabled = true;
+      showScreen("screen-onboarding");
+    });
+
+    // ── PRIVACY MODAL ──
+    function openPrivacy() {
+      document.getElementById("modal-privacy").classList.add("open");
+    }
+
+    ["btn-info", "btn-info-2"].forEach(id =>
+      document.getElementById(id).addEventListener("click", openPrivacy)
+    );
+
+    document.getElementById("modal-close").addEventListener("click", () => {
+      document.getElementById("modal-privacy").classList.remove("open");
+    });
+
+    document.getElementById("modal-privacy").addEventListener("click", e => {
+      if (e.target === document.getElementById("modal-privacy"))
+        document.getElementById("modal-privacy").classList.remove("open");
+    });
+
+    // ── UTILS ──
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
   </script>
 </body>
 </html>
