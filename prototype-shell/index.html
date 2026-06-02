@@ -1,413 +1,1181 @@
 <!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prototype Shell</title>
+  <title>Baseline — KNLTB NTC Dashboard</title>
   <style>
     :root {
-      --ink: #17211d;
-      --muted: #5e6a63;
-      --paper: #f7f4ec;
+      --navy: #1a2744;
+      --navy-light: #243258;
+      --orange: #e8500a;
+      --orange-dark: #c43f06;
+      --bg: #f5f6f8;
       --panel: #ffffff;
-      --line: #d8d2c4;
-      --field: #f1eee6;
-      --green: #1f6f54;
-      --green-dark: #154838;
-      --gold: #d89b27;
-      --coral: #d85f45;
-      --shadow: 0 18px 50px rgba(38, 35, 27, 0.14);
+      --border: #e2e5ea;
+      --text: #1a1f2e;
+      --muted: #6b7280;
+      --present: #16a34a;
+      --extern: #2563eb;
+      --unknown: #d97706;
+      --flag: #f59e0b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow: 0 4px 16px rgba(0,0,0,0.10);
+      --radius: 8px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      min-height: 100vh;
-      color: var(--ink);
-      font-family: Georgia, "Times New Roman", serif;
-      background:
-        linear-gradient(135deg, rgba(31, 111, 84, 0.12), transparent 35%),
-        radial-gradient(circle at 85% 10%, rgba(216, 155, 39, 0.18), transparent 32%),
-        var(--paper);
-    }
-
-    button,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    .page {
-      width: min(1120px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 34px 0 44px;
-    }
-
-    header {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 28px;
-      align-items: end;
-      padding: 28px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    h1 {
-      margin: 0;
-      max-width: 760px;
-      font-size: clamp(2.2rem, 6vw, 5.2rem);
-      line-height: 0.94;
-      letter-spacing: 0;
-    }
-
-    .intro {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.05rem;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
       line-height: 1.5;
     }
 
-    .workspace {
-      display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 18px;
-      margin-top: 24px;
+    /* ─── LOGIN ───────────────────────────────── */
+
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
     }
 
-    .panel {
-      background: rgba(255, 255, 255, 0.82);
-      border: 1px solid var(--line);
-      border-radius: 8px;
+    .login-card {
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 48px 40px;
+      max-width: 400px;
+      width: calc(100% - 32px);
+      text-align: center;
       box-shadow: var(--shadow);
     }
 
-    .controls {
-      padding: 18px;
-    }
-
-    label {
-      display: block;
-      margin: 0 0 8px;
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    select,
-    textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--field);
-      color: var(--ink);
-      padding: 12px;
-    }
-
-    textarea {
-      min-height: 108px;
-      resize: vertical;
-      line-height: 1.45;
-    }
-
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .primary {
-      width: 100%;
-      border: 0;
-      border-radius: 6px;
-      background: var(--green);
+    .login-logo {
+      display: inline-block;
+      background: var(--orange);
       color: white;
-      padding: 13px 16px;
-      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.4rem;
+      padding: 10px 22px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
     }
 
-    .primary:hover {
-      background: var(--green-dark);
+    .login-card h1 {
+      margin: 0 0 6px;
+      font-size: 1.5rem;
+      color: var(--navy);
     }
 
-    .output {
-      min-height: 520px;
-      padding: 22px;
-      display: grid;
-      gap: 18px;
+    .login-card .subtitle {
+      margin: 0 0 32px;
+      color: var(--muted);
+      font-size: 0.93rem;
     }
 
-    .result-top {
+    .ms-btn {
       display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: flex-start;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px 20px;
+      background: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.97rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
     }
+
+    .ms-btn:hover { background: #005a9e; }
+
+    .login-note {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ─── APP SHELL ───────────────────────────── */
+
+    #app { display: none; min-height: 100vh; }
+
+    /* Top bar */
+    .topbar {
+      background: var(--navy);
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 20px;
+      height: 54px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .topbar-logo {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      color: var(--orange);
+      white-space: nowrap;
+    }
+
+    .topbar-sep {
+      width: 1px;
+      height: 20px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .topbar-title {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+      white-space: nowrap;
+    }
+
+    .topbar-sync {
+      margin-left: auto;
+      font-size: 0.76rem;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap;
+    }
+
+    .topbar-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      margin-left: 6px;
+    }
+
+    /* Week nav */
+    .week-nav {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--panel);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .icon-btn:hover { background: var(--bg); }
+
+    .week-label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 190px;
+    }
+
+    .week-range {
+      font-weight: 400;
+      color: var(--muted);
+      font-size: 0.83rem;
+    }
+
+    .current-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .text-btn {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--panel);
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: inherit;
+    }
+
+    .text-btn:hover { background: var(--bg); }
+
+    /* Content grid */
+    .content {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 20px 16px 100px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      font-weight: 600;
+      font-size: 0.93rem;
+      color: var(--navy);
+      margin: 0;
+    }
+
+    .panel-body { padding: 12px 16px; }
+
+    /* Filter chips */
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.76rem;
+      cursor: pointer;
+      background: var(--bg);
+      color: var(--muted);
+      font-family: inherit;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+
+    .chip.active {
+      background: var(--navy);
+      color: white;
+      border-color: var(--navy);
+    }
+
+    /* Group rows */
+    .group-row {
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .group-row:last-child { border-bottom: none; }
+
+    .group-name {
+      font-weight: 600;
+      font-size: 0.86rem;
+      margin-bottom: 5px;
+      color: var(--navy);
+    }
+
+    .activity-tags { display: flex; flex-wrap: wrap; gap: 4px; }
 
     .tag {
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgba(31, 111, 84, 0.3);
-      border-radius: 999px;
-      color: var(--green-dark);
-      padding: 6px 10px;
-      font-size: 0.86rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.73rem;
+      font-weight: 500;
       white-space: nowrap;
     }
 
-    h2,
-    h3 {
-      margin: 0;
-      letter-spacing: 0;
+    .tag-toernooi   { background: #fee2e2; color: #991b1b; }
+    .tag-event      { background: #dbeafe; color: #1e40af; }
+    .tag-testdag    { background: #ede9fe; color: #5b21b6; }
+    .tag-bijeenkomst{ background: #fef3c7; color: #92400e; }
+    .tag-vakantie   { background: #f3f4f6; color: #4b5563; }
+    .tag-geen       { background: #f9fafb; color: #9ca3af; font-style: italic; }
+
+    /* Yellow flag */
+    .flag {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.73rem;
+      color: #92400e;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 4px;
+      padding: 2px 7px;
+      cursor: help;
     }
 
-    h2 {
-      font-size: clamp(1.6rem, 3vw, 2.6rem);
-      line-height: 1.02;
+    .flag-tip {
+      display: none;
+      position: absolute;
+      top: calc(100% + 5px);
+      left: 0;
+      background: #1a1f2e;
+      color: white;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.73rem;
+      white-space: nowrap;
+      z-index: 40;
+      pointer-events: none;
+      box-shadow: var(--shadow);
     }
 
-    h3 {
-      font-size: 1.05rem;
+    .flag:hover .flag-tip { display: block; }
+
+    /* Attendance */
+    .group-label {
+      font-size: 0.71rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 0 0 7px;
     }
 
-    .recommendation {
-      margin: 0;
-      font-size: 1.28rem;
-      line-height: 1.42;
-    }
-
-    .evidence {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    .person-row {
+      display: flex;
+      align-items: center;
       gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.1s;
     }
 
-    .evidence-item {
-      min-height: 132px;
-      border: 1px solid var(--line);
+    .person-row:last-child { border-bottom: none; }
+
+    .person-row:hover {
+      background: #f9fafb;
+      margin: 0 -16px;
+      padding: 7px 16px;
+    }
+
+    .person-info { flex: 1; min-width: 0; }
+
+    .person-name {
+      font-size: 0.86rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .person-role {
+      font-size: 0.73rem;
+      color: var(--muted);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.73rem;
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .s-aanwezig { background: #dcfce7; color: #15803d; }
+    .s-extern   { background: #dbeafe; color: #1d4ed8; }
+
+    .search-input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-size: 0.86rem;
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 10px;
+      font-family: inherit;
+    }
+
+    .search-input:focus {
+      outline: 2px solid var(--orange);
+      outline-offset: -1px;
+    }
+
+    .attendance-group { margin-bottom: 12px; }
+
+    /* ─── CHATBOX ──────────────────────────────── */
+
+    .chat-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px rgba(232,80,10,0.45);
+      z-index: 200;
+      font-size: 1.25rem;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .chat-fab:hover { background: var(--orange-dark); transform: scale(1.06); }
+
+    .chat-panel {
+      position: fixed;
+      bottom: 84px;
+      right: 24px;
+      width: 360px;
+      max-height: 500px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      display: none;
+      flex-direction: column;
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    .chat-panel.open { display: flex; }
+
+    .chat-head {
+      background: var(--navy);
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .chat-head-title { font-weight: 600; font-size: 0.88rem; }
+
+    .chat-head-sub {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 1px;
+    }
+
+    .chat-x {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.55);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .msg {
+      max-width: 88%;
+      padding: 8px 11px;
       border-radius: 8px;
-      background: #fbfaf6;
-      padding: 14px;
+      font-size: 0.83rem;
+      line-height: 1.48;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
-    .evidence-item span {
-      display: block;
-      color: var(--coral);
-      font-size: 0.8rem;
-      margin-bottom: 8px;
+    .msg.user {
+      background: var(--navy);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
     }
 
-    .evidence-item p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.42;
+    .msg.bot {
+      background: var(--bg);
+      color: var(--text);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
     }
 
-    .next-step,
-    .feedback {
-      border-top: 1px solid var(--line);
-      padding-top: 16px;
+    .msg.refused {
+      background: #fff7ed;
+      color: #92400e;
+      border: 1px solid #fed7aa;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
     }
 
-    .next-step p {
-      margin: 8px 0 0;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .feedback-row {
+    .chat-suggestions {
+      padding: 0 10px 8px;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 5px;
+      flex-shrink: 0;
     }
 
-    .feedback button {
-      border: 1px solid var(--line);
+    .suggestion {
+      border: 1px solid var(--border);
       border-radius: 999px;
-      background: #fbfaf6;
-      color: var(--ink);
-      padding: 9px 12px;
+      padding: 4px 9px;
+      font-size: 0.73rem;
       cursor: pointer;
+      background: var(--bg);
+      color: var(--muted);
+      font-family: inherit;
     }
 
-    .feedback button.selected {
-      border-color: var(--gold);
-      background: rgba(216, 155, 39, 0.16);
+    .suggestion:hover { background: var(--border); }
+
+    .chat-foot {
+      padding: 8px 10px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 7px;
+      flex-shrink: 0;
     }
 
-    .status {
-      min-height: 22px;
-      margin-top: 10px;
-      color: var(--green-dark);
-      font-size: 0.95rem;
+    .chat-in {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 0.83rem;
+      background: var(--bg);
+      color: var(--text);
+      resize: none;
+      font-family: inherit;
+      line-height: 1.4;
     }
+
+    .chat-in:focus { outline: 2px solid var(--orange); outline-offset: -1px; }
+
+    .chat-send-btn {
+      border: none;
+      background: var(--orange);
+      color: white;
+      border-radius: 6px;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-size: 0.83rem;
+      font-family: inherit;
+      flex-shrink: 0;
+      align-self: flex-end;
+    }
+
+    .chat-send-btn:hover { background: var(--orange-dark); }
+
+    /* ─── DRILL-DOWN OVERLAY ─────────────────── */
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 300;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .overlay.open { display: flex; }
+
+    .drill-card {
+      background: var(--panel);
+      border-radius: 12px 12px 0 0;
+      width: 100%;
+      max-width: 560px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 20px;
+      animation: slideUp 0.2s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(16px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .drill-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .drill-person { font-weight: 700; font-size: 1.05rem; color: var(--navy); }
+    .drill-role   { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+    .drill-back {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--panel);
+      padding: 6px 13px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: inherit;
+    }
+
+    .drill-back:hover { background: var(--bg); }
+
+    .drill-weeks {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .drill-week {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 10px;
+    }
+
+    .drill-wk-label {
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 7px;
+      line-height: 1.35;
+    }
+
+    /* ─── EMPTY / UTILITY ────────────────────── */
+
+    .empty-msg {
+      font-size: 0.83rem;
+      color: var(--muted);
+      padding: 8px 0;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────── */
 
     @media (max-width: 820px) {
-      header,
-      .workspace {
-        grid-template-columns: 1fr;
-      }
+      .content { grid-template-columns: 1fr; }
+    }
 
-      .output {
-        min-height: auto;
-      }
-
-      .result-top {
-        display: grid;
-      }
-
-      .evidence {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 480px) {
+      .chat-panel { width: calc(100vw - 32px); right: 16px; }
+      .drill-weeks { grid-template-columns: repeat(2, 1fr); }
+      .topbar-sync { display: none; }
+      .topbar-title { display: none; }
+      .week-range { display: none; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <header>
-      <h1>Prototype Shell</h1>
-      <p class="intro">A standalone Phase 1 concept flow: pick a safe example, add a little context, generate a mocked recommendation, and capture feedback.</p>
-    </header>
 
-    <section class="workspace" aria-label="Clickable prototype workspace">
-      <form class="panel controls" id="prototype-form">
-        <div class="field">
-          <label for="scenario">Example scenario</label>
-          <select id="scenario" name="scenario">
-            <option value="match">Match insight coach</option>
-            <option value="student">Student project helper</option>
-            <option value="support">Support triage assistant</option>
-          </select>
+<!-- ═══════════════════ LOGIN ═══════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">KNLTB</div>
+    <h1>Baseline</h1>
+    <p class="subtitle">NTC planningsdashboard voor technische staf</p>
+    <button class="ms-btn" id="login-btn">
+      <svg width="18" height="18" viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M1 1h10v10H1V1z" fill="#f25022"/>
+        <path d="M12 1h10v10H12V1z" fill="#7fba00"/>
+        <path d="M1 12h10v10H1V12z" fill="#00a4ef"/>
+        <path d="M12 12h10v10H12V12z" fill="#ffb900"/>
+      </svg>
+      Inloggen met Microsoft
+    </button>
+    <p class="login-note">Gebruik je KNLTB Microsoft-account.<br>Geen apart wachtwoord nodig.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ APP ═══════════════════ -->
+<div id="app">
+
+  <nav class="topbar">
+    <div class="topbar-logo">KNLTB · Baseline</div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-title">Nationaal Tennis Centrum</div>
+    <div class="topbar-sync" id="sync-label">Laatste update: vandaag om 08:14</div>
+    <div class="topbar-avatar">MS</div>
+  </nav>
+
+  <div class="week-nav">
+    <button class="icon-btn" id="prev-week" title="Vorige week">&#8592;</button>
+    <div class="week-label" id="week-label">
+      Week 23 <span class="week-range">2–8 juni 2026</span>
+    </div>
+    <button class="icon-btn" id="next-week" title="Volgende week">&#8594;</button>
+    <button class="text-btn" id="this-week">Deze week</button>
+  </div>
+
+  <div class="content">
+
+    <!-- GROUP PLANNING -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Groepsplanning</h2>
+      </div>
+      <div class="panel-body">
+        <div class="filter-chips" id="group-filters">
+          <button class="chip active" data-group="all">Alle groepen</button>
+          <button class="chip" data-group="groep1">Groep 1</button>
+          <button class="chip" data-group="groep2">Groep 2</button>
+          <button class="chip" data-group="groep3">Groep 3</button>
+          <button class="chip" data-group="groep4">Groep 4</button>
+          <button class="chip" data-group="rolstoel">Rolstoeltennis</button>
         </div>
-
-        <div class="field">
-          <label for="context">Context to include</label>
-          <textarea id="context" name="context">City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.</textarea>
-        </div>
-
-        <button class="primary" type="submit">Generate draft insight</button>
-      </form>
-
-      <section class="panel output" aria-live="polite">
-        <div class="result-top">
-          <div>
-            <h2 id="result-title">Match Insight Coach</h2>
-            <p class="recommendation" id="recommendation">Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.</p>
-          </div>
-          <span class="tag" id="audience">Youth football coach</span>
-        </div>
-
-        <div class="evidence" id="evidence"></div>
-
-        <div class="next-step">
-          <h3>Suggested next step</h3>
-          <p id="next-step">Test this with one coach and ask whether the output changes the next training plan.</p>
-        </div>
-
-        <div class="feedback">
-          <h3>Was this useful?</h3>
-          <div class="feedback-row">
-            <button type="button" data-feedback="Useful">Useful</button>
-            <button type="button" data-feedback="Almost">Almost</button>
-            <button type="button" data-feedback="Not yet">Not yet</button>
-          </div>
-          <div class="status" id="feedback-status"></div>
-        </div>
-      </section>
+        <div id="planning-body"></div>
+      </div>
     </section>
-  </main>
 
-  <script>
-    const scenarios = {
-      match: {
-        title: "Match Insight Coach",
-        audience: "Youth football coach",
-        recommendation: "Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.",
-        evidence: [
-          "High shot volume with low shot accuracy.",
-          "Most chances came from wide areas.",
-          "Counters followed several midfield turnovers."
-        ],
-        nextStep: "Test this with one coach and ask whether the output changes the next training plan."
-      },
-      student: {
-        title: "Student Project Helper",
-        audience: "Workshop participant",
-        recommendation: "Turn the broad idea into a clickable flow that transforms one event goal into a draft task list and feedback prompt.",
-        evidence: [
-          "The idea is real but still broad.",
-          "The first prototype needs one clear journey.",
-          "Peer feedback is more useful than feature completeness."
-        ],
-        nextStep: "Show the shell to two peers before adding integrations."
-      },
-      support: {
-        title: "Support Triage Assistant",
-        audience: "Customer support lead",
-        recommendation: "Create a triage summary with likely cause, sample reply, and one product question for the onboarding team.",
-        evidence: [
-          "Several customers report confusion at the same step.",
-          "The issue affects new users before activation.",
-          "Support notes contain enough detail for a mocked recommendation."
-        ],
-        nextStep: "Ask a support lead if the evidence shown is enough to trust the recommendation."
-      }
-    };
+    <!-- ATTENDANCE -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">Aanwezigheid staf &amp; spelers</h2>
+      </div>
+      <div class="panel-body">
+        <input class="search-input" id="search" type="text" placeholder="Zoek op naam…" autocomplete="off" />
+        <div id="attendance-body"></div>
+      </div>
+    </section>
 
-    const form = document.querySelector("#prototype-form");
-    const scenarioInput = document.querySelector("#scenario");
-    const contextInput = document.querySelector("#context");
-    const title = document.querySelector("#result-title");
-    const audience = document.querySelector("#audience");
-    const recommendation = document.querySelector("#recommendation");
-    const evidence = document.querySelector("#evidence");
-    const nextStep = document.querySelector("#next-step");
-    const feedbackStatus = document.querySelector("#feedback-status");
+  </div>
 
-    function renderScenario(key) {
-      const scenario = scenarios[key];
-      title.textContent = scenario.title;
-      audience.textContent = scenario.audience;
-      recommendation.textContent = scenario.recommendation;
-      nextStep.textContent = scenario.nextStep;
-      evidence.innerHTML = scenario.evidence.map((item, index) => `
-        <article class="evidence-item">
-          <span>Evidence ${index + 1}</span>
-          <p>${item}</p>
-        </article>
-      `).join("");
-      feedbackStatus.textContent = "";
-      document.querySelectorAll("[data-feedback]").forEach((button) => {
-        button.classList.remove("selected");
-      });
+  <!-- CHATBOX FAB -->
+  <button class="chat-fab" id="chat-fab" aria-label="Open chatbox">💬</button>
+
+  <!-- CHATBOX PANEL -->
+  <div class="chat-panel" id="chat-panel" role="dialog" aria-label="Baseline assistent">
+    <div class="chat-head">
+      <div>
+        <div class="chat-head-title">Baseline assistent</div>
+        <div class="chat-head-sub">Groepsplanning &amp; aanwezigheid</div>
+      </div>
+      <button class="chat-x" id="chat-close" aria-label="Sluiten">✕</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg bot">Hallo! Ik kan vragen beantwoorden over de groepsplanning en aanwezigheid. Wat wil je weten?</div>
+    </div>
+    <div class="chat-suggestions">
+      <button class="suggestion" data-q="Wie is er deze week aanwezig op het NTC?">Wie is aanwezig?</button>
+      <button class="suggestion" data-q="Wat staat er gepland voor Groep 1?">Planning Groep 1</button>
+      <button class="suggestion" data-q="Wanneer is Lisa Janssen beschikbaar?">Lisa beschikbaar?</button>
+      <button class="suggestion" data-q="Hoeveel calorieën moet ik eten?">Voedingsadvies?</button>
+    </div>
+    <div class="chat-foot">
+      <textarea class="chat-in" id="chat-input" rows="1" placeholder="Stel een vraag over planning of aanwezigheid…"></textarea>
+      <button class="chat-send-btn" id="chat-send">Stuur</button>
+    </div>
+  </div>
+
+  <!-- DRILL-DOWN OVERLAY -->
+  <div class="overlay" id="overlay">
+    <div class="drill-card">
+      <div class="drill-head">
+        <div>
+          <div class="drill-person" id="drill-name">–</div>
+          <div class="drill-role" id="drill-role">–</div>
+        </div>
+        <button class="drill-back" id="drill-close">← Terug</button>
+      </div>
+      <div class="drill-weeks" id="drill-weeks"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+
+const CURRENT_WEEK = 23;
+
+const WEEKS = {
+  21: { label: "Week 21", range: "18–24 mei 2026" },
+  22: { label: "Week 22", range: "25–31 mei 2026" },
+  23: { label: "Week 23", range: "2–8 juni 2026" },
+  24: { label: "Week 24", range: "9–15 juni 2026" },
+  25: { label: "Week 25", range: "16–22 juni 2026" },
+};
+
+// null = missing data (yellow flag), [] = no activities, [...] = activities
+const PLANNING = {
+  21: {
+    groep1:   [{ type: "bijeenkomst", label: "Teambespreking" }],
+    groep2:   [{ type: "testdag",     label: "Fitheidstest" }],
+    groep3:   [{ type: "bijeenkomst", label: "Seizoensevaluatie" }],
+    groep4:   [],
+    rolstoel: [{ type: "event",       label: "Open Training NTC" }],
+  },
+  22: {
+    groep1:   [{ type: "toernooi", label: "Roland Garros (kwalificatie)" }],
+    groep2:   [{ type: "toernooi", label: "Roland Garros juniors" }],
+    groep3:   [{ type: "vakantie", label: "Vrij (meivakantie)" }],
+    groep4:   [{ type: "vakantie", label: "Vrij (meivakantie)" }],
+    rolstoel: null,
+  },
+  23: {
+    groep1:   [{ type: "toernooi", label: "Roland Garros (hoofdtoernooi)" }],
+    groep2:   [{ type: "toernooi", label: "French Open juniors" }],
+    groep3:   [{ type: "testdag", label: "Testdag" }, { type: "bijeenkomst", label: "Teamoverleg" }],
+    groep4:   [{ type: "bijeenkomst", label: "Teambespreking" }],
+    rolstoel: [{ type: "event",   label: "Demo-event NTC" }],
+  },
+  24: {
+    groep1:   [{ type: "toernooi", label: "Roland Garros (eindrondes)" }],
+    groep2:   [{ type: "bijeenkomst", label: "Debriefing Roland Garros" }],
+    groep3:   [{ type: "testdag", label: "Krachttesting" }],
+    groep4:   null,
+    rolstoel: [{ type: "vakantie", label: "Vrij" }],
+  },
+  25: {
+    groep1:   [{ type: "bijeenkomst", label: "Terugkeer & herstel" }],
+    groep2:   [],
+    groep3:   [],
+    groep4:   [{ type: "event", label: "NTC Open Dag" }],
+    rolstoel: null,
+  },
+};
+
+const GROUPS = {
+  groep1:   "Groep 1",
+  groep2:   "Groep 2",
+  groep3:   "Groep 3",
+  groep4:   "Groep 4",
+  rolstoel: "Rolstoeltennis",
+};
+
+const STAFF = [
+  { id: "s1", name: "Mark de Vries",     role: "S&C Coach" },
+  { id: "s2", name: "Lisa Janssen",      role: "Tenniscoach" },
+  { id: "s3", name: "Tom Bakker",        role: "Sport Scientist" },
+  { id: "s4", name: "Anna Koopman",      role: "Bondsarts" },
+  { id: "s5", name: "Peter Smit",        role: "Tenniscoach" },
+  { id: "s6", name: "Sofie van den Berg",role: "Fysiotherapeut" },
+];
+
+const PLAYERS = [
+  { id: "p1", name: "Emma Visser",    role: "Groep 1" },
+  { id: "p2", name: "Daan Hoekstra",  role: "Groep 1" },
+  { id: "p3", name: "Lotte Mulder",   role: "Groep 1" },
+  { id: "p4", name: "Sven de Boer",   role: "Groep 2" },
+  { id: "p5", name: "Noor Brouwer",   role: "Groep 2" },
+  { id: "p6", name: "Tim Verhoeven",  role: "Groep 3" },
+  { id: "p7", name: "Fleur Dijkstra", role: "Groep 3" },
+  { id: "p8", name: "Bas Willems",    role: "Groep 4" },
+  { id: "p9", name: "Roos Hendriks",  role: "Groep 4" },
+];
+
+// "aanwezig" | "extern" | "onbekend"
+const ATTENDANCE = {
+  21: {
+    s1:"aanwezig", s2:"aanwezig", s3:"extern",   s4:"aanwezig", s5:"aanwezig", s6:"aanwezig",
+    p1:"aanwezig", p2:"extern",   p3:"aanwezig", p4:"extern",   p5:"aanwezig",
+    p6:"aanwezig", p7:"aanwezig", p8:"aanwezig", p9:"aanwezig",
+  },
+  22: {
+    s1:"aanwezig", s2:"extern",   s3:"aanwezig", s4:"onbekend", s5:"extern",   s6:"aanwezig",
+    p1:"extern",   p2:"extern",   p3:"extern",   p4:"extern",   p5:"aanwezig",
+    p6:"extern",   p7:"extern",   p8:"extern",   p9:"extern",
+  },
+  23: {
+    s1:"aanwezig", s2:"extern",   s3:"aanwezig", s4:"onbekend", s5:"extern",   s6:"aanwezig",
+    p1:"aanwezig", p2:"extern",   p3:"extern",   p4:"extern",   p5:"aanwezig",
+    p6:"aanwezig", p7:"onbekend", p8:"aanwezig", p9:"extern",
+  },
+  24: {
+    s1:"aanwezig", s2:"extern",   s3:"aanwezig", s4:"aanwezig", s5:"aanwezig", s6:"aanwezig",
+    p1:"extern",   p2:"extern",   p3:"extern",   p4:"aanwezig", p5:"aanwezig",
+    p6:"onbekend", p7:"onbekend", p8:"aanwezig", p9:"aanwezig",
+  },
+  25: {
+    s1:"aanwezig", s2:"aanwezig", s3:"aanwezig", s4:"aanwezig", s5:"aanwezig", s6:"onbekend",
+    p1:"aanwezig", p2:"aanwezig", p3:"aanwezig", p4:"aanwezig", p5:"aanwezig",
+    p6:"aanwezig", p7:"aanwezig", p8:"aanwezig", p9:"aanwezig",
+  },
+};
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+
+let currentWeek   = CURRENT_WEEK;
+let groupFilter   = "all";
+let searchQuery   = "";
+
+// ─── RENDER PLANNING ─────────────────────────────────────────────────────────
+
+function renderPlanning() {
+  const body = document.querySelector("#planning-body");
+  const weekData = PLANNING[currentWeek] || {};
+  const chipKey = { groep1:"groep1", groep2:"groep2", groep3:"groep3", groep4:"groep4", rolstoel:"rolstoel" };
+  const keys = groupFilter === "all" ? Object.keys(GROUPS) : [chipKey[groupFilter]].filter(Boolean);
+
+  body.innerHTML = keys.map(key => {
+    const activities = weekData[key];
+    const isMissing  = activities === null || activities === undefined;
+    const isEmpty    = !isMissing && activities.length === 0;
+
+    let activitiesHtml;
+    if (isMissing) {
+      activitiesHtml = `<span class="flag">⚑ Geen data<span class="flag-tip">Bronbestand ontbreekt of niet bijgewerkt</span></span>`;
+    } else if (isEmpty) {
+      activitiesHtml = `<span class="tag tag-geen">Geen activiteiten gepland</span>`;
+    } else {
+      activitiesHtml = `<div class="activity-tags">${
+        activities.map(a => `<span class="tag tag-${a.type}">${a.label}</span>`).join("")
+      }</div>`;
     }
 
-    scenarioInput.addEventListener("change", () => {
-      const starterText = {
-        match: "City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.",
-        student: "The student has a broad AI idea and needs a quick prototype journey to test with peers.",
-        support: "Three customers report login confusion after the onboarding email. The support lead wants a clear triage view."
-      };
-      contextInput.value = starterText[scenarioInput.value];
-      renderScenario(scenarioInput.value);
-    });
+    return `<div class="group-row">
+      <div class="group-name">${GROUPS[key]}</div>
+      ${activitiesHtml}
+    </div>`;
+  }).join("");
+}
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      renderScenario(scenarioInput.value);
-    });
+// ─── RENDER ATTENDANCE ────────────────────────────────────────────────────────
 
-    document.querySelectorAll("[data-feedback]").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll("[data-feedback]").forEach((item) => {
-          item.classList.remove("selected");
-        });
-        button.classList.add("selected");
-        feedbackStatus.textContent = `Feedback captured: ${button.dataset.feedback}`;
-      });
-    });
+function statusHtml(id) {
+  const s = (ATTENDANCE[currentWeek] || {})[id];
+  if (s === "aanwezig") return `<span class="status-badge s-aanwezig">✅ Aanwezig NTC</span>`;
+  if (s === "extern")   return `<span class="status-badge s-extern">🌍 Extern</span>`;
+  return `<span class="flag">⚑ Onbekend<span class="flag-tip">Aanwezigheid niet ingevuld</span></span>`;
+}
 
-    renderScenario("match");
-  </script>
+function renderAttendance() {
+  const body = document.querySelector("#attendance-body");
+  const q = searchQuery.toLowerCase();
+
+  function row(p) {
+    if (q && !p.name.toLowerCase().includes(q)) return "";
+    return `<div class="person-row" data-id="${p.id}" data-name="${p.name}" data-role="${p.role}">
+      <div class="person-info">
+        <div class="person-name">${p.name}</div>
+        <div class="person-role">${p.role}</div>
+      </div>
+      ${statusHtml(p.id)}
+    </div>`;
+  }
+
+  const staffRows   = STAFF.map(row).filter(Boolean).join("");
+  const playerRows  = PLAYERS.map(row).filter(Boolean).join("");
+
+  if (!staffRows && !playerRows) {
+    body.innerHTML = `<p class="empty-msg">Geen resultaten voor &ldquo;${searchQuery}&rdquo;</p>`;
+  } else {
+    body.innerHTML = (staffRows  ? `<div class="attendance-group"><p class="group-label">Staf</p>${staffRows}</div>`   : "") +
+                     (playerRows ? `<div class="attendance-group"><p class="group-label">Spelers</p>${playerRows}</div>` : "");
+  }
+
+  document.querySelectorAll(".person-row").forEach(el => {
+    el.addEventListener("click", () => openDrill(el.dataset.id, el.dataset.name, el.dataset.role));
+  });
+}
+
+// ─── WEEK NAV ─────────────────────────────────────────────────────────────────
+
+function setWeek(n) {
+  const keys = Object.keys(WEEKS).map(Number);
+  currentWeek = Math.max(Math.min(...keys), Math.min(Math.max(...keys), n));
+  const w = WEEKS[currentWeek];
+  const lbl = document.querySelector("#week-label");
+  lbl.innerHTML = `${w.label} <span class="week-range">${w.range}</span>` +
+    (currentWeek === CURRENT_WEEK ? ` <span class="current-dot" title="Huidige week"></span>` : "");
+  renderPlanning();
+  renderAttendance();
+}
+
+document.querySelector("#prev-week").addEventListener("click", () => setWeek(currentWeek - 1));
+document.querySelector("#next-week").addEventListener("click", () => setWeek(currentWeek + 1));
+document.querySelector("#this-week").addEventListener("click", () => setWeek(CURRENT_WEEK));
+
+// ─── GROUP FILTER ─────────────────────────────────────────────────────────────
+
+document.querySelector("#group-filters").addEventListener("click", e => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  chip.classList.add("active");
+  groupFilter = chip.dataset.group;
+  renderPlanning();
+});
+
+// ─── SEARCH ───────────────────────────────────────────────────────────────────
+
+document.querySelector("#search").addEventListener("input", e => {
+  searchQuery = e.target.value;
+  renderAttendance();
+});
+
+// ─── DRILL-DOWN ───────────────────────────────────────────────────────────────
+
+function openDrill(id, name, role) {
+  document.querySelector("#drill-name").textContent = name;
+  document.querySelector("#drill-role").textContent = role;
+
+  const weeksToShow = [currentWeek, currentWeek + 1, currentWeek + 2, currentWeek + 3];
+  document.querySelector("#drill-weeks").innerHTML = weeksToShow.map(w => {
+    const wInfo = WEEKS[w];
+    const wLabel = wInfo ? wInfo.label : `Week ${w}`;
+    const wRange = wInfo ? wInfo.range : "–";
+    const status = (ATTENDANCE[w] || {})[id];
+
+    let statusEl;
+    if (!status) {
+      statusEl = `<span class="flag">⚑ Geen data<span class="flag-tip">Geen aanwezigheidsdata</span></span>`;
+    } else if (status === "aanwezig") {
+      statusEl = `<span class="status-badge s-aanwezig">✅ Aanwezig NTC</span>`;
+    } else if (status === "extern") {
+      statusEl = `<span class="status-badge s-extern">🌍 Extern</span>`;
+    } else {
+      statusEl = `<span class="flag">⚑ Onbekend<span class="flag-tip">Niet ingevuld</span></span>`;
+    }
+
+    return `<div class="drill-week">
+      <div class="drill-wk-label">${wLabel}<br><span style="font-weight:400">${wRange}</span></div>
+      ${statusEl}
+    </div>`;
+  }).join("");
+
+  document.querySelector("#overlay").classList.add("open");
+}
+
+document.querySelector("#drill-close").addEventListener("click", () => {
+  document.querySelector("#overlay").classList.remove("open");
+});
+
+document.querySelector("#overlay").addEventListener("click", e => {
+  if (e.target === document.querySelector("#overlay"))
+    document.querySelector("#overlay").classList.remove("open");
+});
+
+// ─── CHATBOX ──────────────────────────────────────────────────────────────────
+
+const chatFab   = document.querySelector("#chat-fab");
+const chatPanel = document.querySelector("#chat-panel");
+const chatMsgs  = document.querySelector("#chat-messages");
+const chatInput = document.querySelector("#chat-input");
+
+chatFab.addEventListener("click", () => chatPanel.classList.toggle("open"));
+document.querySelector("#chat-close").addEventListener("click", () => chatPanel.classList.remove("open"));
+document.querySelector("#chat-send").addEventListener("click", sendChat);
+chatInput.addEventListener("keydown", e => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendChat(); }
+});
+
+document.querySelectorAll(".suggestion").forEach(btn => {
+  btn.addEventListener("click", () => { chatInput.value = btn.dataset.q; sendChat(); });
+});
+
+function sendChat() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+  addMsg(text, "user");
+  chatInput.value = "";
+  setTimeout(() => {
+    const { text: resp, refused } = getReply(text.toLowerCase());
+    addMsg(resp, refused ? "refused" : "bot");
+  }, 500);
+}
+
+function addMsg(text, cls) {
+  const div = document.createElement("div");
+  div.className = `msg ${cls}`;
+  div.textContent = text;
+  chatMsgs.appendChild(div);
+  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+}
+
+function getReply(q) {
+  // Out-of-scope refusal
+  const outOfScope = ["calorie", "voeding", "dieet", "recept", "weer", "score", "uitslag", "nieuws", "salaris", "financieel"];
+  if (outOfScope.some(w => q.includes(w))) {
+    return { text: "Dit valt buiten wat ik kan opzoeken — ik kan alleen vragen beantwoorden over de groepsplanning en aanwezigheid van staf en spelers.", refused: true };
+  }
+
+  // Aanwezigheid
+  if (["aanwezig", "wie is er", "morgen", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag"].some(w => q.includes(w))) {
+    const wd = ATTENDANCE[currentWeek] || {};
+    const present = STAFF.filter(s => wd[s.id] === "aanwezig").map(s => s.name);
+    const extern  = STAFF.filter(s => wd[s.id] === "extern").map(s => s.name);
+    const unknown = STAFF.filter(s => wd[s.id] === "onbekend").map(s => s.name);
+    let reply = `Aanwezigheid staf — ${WEEKS[currentWeek]?.label}:\n\n✅ Aanwezig NTC: ${present.join(", ") || "–"}\n🌍 Extern: ${extern.join(", ") || "–"}`;
+    if (unknown.length) reply += `\n⚑ Onbekend: ${unknown.join(", ")}`;
+    return { text: reply, refused: false };
+  }
+
+  // Lisa specifically
+  if (q.includes("lisa") || q.includes("janssen")) {
+    const weeks = [currentWeek, currentWeek + 1, currentWeek + 2, currentWeek + 3];
+    const lines = weeks.map(w => {
+      const wInfo = WEEKS[w];
+      const s = (ATTENDANCE[w] || {})["s2"];
+      const icon  = s === "aanwezig" ? "✅" : s === "extern" ? "🌍" : "⚑";
+      const label = s === "aanwezig" ? "Aanwezig NTC" : s === "extern" ? "Extern" : "Onbekend";
+      return `${icon} ${wInfo?.label || "Week " + w} (${wInfo?.range || ""}): ${label}`;
+    });
+    return { text: "Lisa Janssen — komende 4 weken:\n\n" + lines.join("\n"), refused: false };
+  }
+
+  // Groep-specific
+  const groepMatch = q.match(/groep\s*([1-4]|rolstoel)/);
+  if (groepMatch) {
+    const key = groepMatch[1] === "rolstoel" ? "rolstoel" : `groep${groepMatch[1]}`;
+    const acts = (PLANNING[currentWeek] || {})[key];
+    if (acts === null || acts === undefined) {
+      return { text: `Er is geen planningsdata beschikbaar voor ${GROUPS[key] || key} in week ${currentWeek}. De brondata ontbreekt of is niet bijgewerkt.`, refused: false };
+    }
+    if (acts.length === 0) {
+      return { text: `${GROUPS[key] || key} heeft geen activiteiten gepland in week ${currentWeek}.`, refused: false };
+    }
+    return { text: `${GROUPS[key] || key} — ${WEEKS[currentWeek]?.label}:\n\n` + acts.map(a => `🎾 ${a.label} (${a.type})`).join("\n"), refused: false };
+  }
+
+  return { text: "Ik kan deze vraag niet beantwoorden op basis van de beschikbare data. Probeer een vraag over een specifieke groep, staflid of speler.", refused: false };
+}
+
+// ─── LOGIN ────────────────────────────────────────────────────────────────────
+
+document.querySelector("#login-btn").addEventListener("click", () => {
+  document.querySelector("#login-screen").style.display = "none";
+  document.querySelector("#app").style.display = "block";
+  setWeek(CURRENT_WEEK);
+});
+</script>
 </body>
 </html>
