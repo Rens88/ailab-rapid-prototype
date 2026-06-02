@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Prototype Shell</title>
+  <title>EquInnoLab — Prestatiesport Portal</title>
   <style>
     :root {
       --ink: #17211d;
@@ -16,12 +16,11 @@
       --green-dark: #154838;
       --gold: #d89b27;
       --coral: #d85f45;
-      --shadow: 0 18px 50px rgba(38, 35, 27, 0.14);
+      --amber: #e07b2a;
+      --shadow: 0 18px 50px rgba(38,35,27,.14);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -29,385 +28,952 @@
       color: var(--ink);
       font-family: Georgia, "Times New Roman", serif;
       background:
-        linear-gradient(135deg, rgba(31, 111, 84, 0.12), transparent 35%),
-        radial-gradient(circle at 85% 10%, rgba(216, 155, 39, 0.18), transparent 32%),
+        linear-gradient(135deg, rgba(31,111,84,.10), transparent 35%),
+        radial-gradient(circle at 85% 10%, rgba(216,155,39,.16), transparent 32%),
         var(--paper);
     }
 
-    button,
-    select,
-    textarea {
-      font: inherit;
-    }
+    button, select, textarea, input { font: inherit; }
 
     .page {
       width: min(1120px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 34px 0 44px;
+      padding: 28px 0 52px;
     }
 
     header {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 28px;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 24px;
       align-items: end;
-      padding: 28px 0;
+      padding: 24px 0 22px;
       border-bottom: 1px solid var(--line);
+      margin-bottom: 24px;
+    }
+
+    .wordmark {
+      font-size: .82rem;
+      letter-spacing: .06em;
+      color: var(--green);
+      margin-bottom: 6px;
+      text-transform: uppercase;
     }
 
     h1 {
       margin: 0;
-      max-width: 760px;
-      font-size: clamp(2.2rem, 6vw, 5.2rem);
-      line-height: 0.94;
-      letter-spacing: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: .96;
     }
 
-    .intro {
-      margin: 0;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.5;
-    }
+    .intro { margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.5; }
 
+    /* ── Screens ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── Workspace (screen 1) ── */
     .workspace {
       display: grid;
-      grid-template-columns: 360px 1fr;
+      grid-template-columns: 340px 1fr;
       gap: 18px;
-      margin-top: 24px;
     }
 
     .panel {
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255,255,255,.84);
       border: 1px solid var(--line);
       border-radius: 8px;
       box-shadow: var(--shadow);
     }
 
-    .controls {
-      padding: 18px;
-    }
+    .controls { padding: 20px; }
+
+    .field { margin-bottom: 16px; }
 
     label {
       display: block;
-      margin: 0 0 8px;
+      margin-bottom: 6px;
       color: var(--muted);
-      font-size: 0.92rem;
+      font-size: .88rem;
     }
 
-    select,
-    textarea {
+    select, textarea, input[type="text"] {
       width: 100%;
       border: 1px solid var(--line);
       border-radius: 6px;
       background: var(--field);
       color: var(--ink);
-      padding: 12px;
+      padding: 11px 12px;
     }
 
-    textarea {
-      min-height: 108px;
-      resize: vertical;
-      line-height: 1.45;
-    }
+    textarea { min-height: 90px; resize: vertical; line-height: 1.45; }
 
-    .field {
-      margin-bottom: 16px;
-    }
-
-    .primary {
+    .btn-primary {
       width: 100%;
       border: 0;
       border-radius: 6px;
       background: var(--green);
-      color: white;
+      color: #fff;
       padding: 13px 16px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--green-dark); }
+    .btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+
+    .session-summary { padding: 22px; }
+
+    .summary-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: .82rem;
+    }
+
+    .badge-green { border: 1px solid rgba(31,111,84,.3); color: var(--green-dark); }
+    .badge-gold { border: 1px solid rgba(216,155,39,.4); color: #835f10; }
+    .badge-grey { border: 1px solid var(--line); color: var(--muted); }
+    .badge-red { border: 1px solid rgba(216,95,69,.35); color: var(--coral); }
+    .badge-amber { border: 1px solid rgba(224,123,42,.35); color: var(--amber); }
+
+    .test-list { list-style: none; margin: 0; padding: 0; }
+
+    .test-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: .95rem;
+    }
+
+    .test-list li:last-child { border-bottom: 0; }
+
+    .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-complete { background: var(--green); }
+    .dot-incomplete { background: var(--amber); }
+    .dot-missing { background: #bbb; }
+
+    .test-label { flex: 1; }
+    .test-status { font-size: .8rem; color: var(--muted); }
+
+    h2 { margin: 0; font-size: clamp(1.3rem,2.5vw,2rem); line-height: 1; }
+    h3 { margin: 0 0 10px; font-size: 1rem; }
+
+    /* ── Generating overlay ── */
+    .generating {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      min-height: 220px;
+      color: var(--muted);
+      font-size: .98rem;
+    }
+
+    .generating.active { display: flex; }
+
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--line);
+      border-top-color: var(--green);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Report screen ── */
+    .report-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .back-link {
+      background: none;
+      border: 0;
+      color: var(--green);
+      cursor: pointer;
+      font-size: .9rem;
+      padding: 0;
+      text-decoration: underline;
+    }
+
+    .report-header-card {
+      background: rgba(255,255,255,.84);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .report-header-card h2 { margin-bottom: 4px; }
+    .report-meta { font-size: .88rem; color: var(--muted); }
+
+    /* Welfare flag */
+    .welfare-flag {
+      background: #fff8f2;
+      border: 1px solid rgba(216,95,69,.35);
+      border-left: 4px solid var(--coral);
+      border-radius: 6px;
+      padding: 13px 16px;
+      margin-bottom: 14px;
+      font-size: .93rem;
+      line-height: 1.5;
+    }
+
+    .welfare-flag strong { color: var(--coral); }
+
+    /* Report sections */
+    .report-section {
+      background: rgba(255,255,255,.84);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 4px 18px rgba(38,35,27,.07);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header:hover { background: rgba(31,111,84,.04); }
+
+    .section-title { flex: 1; font-size: 1rem; font-weight: bold; }
+
+    .conf-badge {
+      font-size: .78rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-family: ui-monospace, monospace;
+    }
+
+    .conf-high { background: rgba(31,111,84,.12); color: var(--green-dark); border: 1px solid rgba(31,111,84,.25); }
+    .conf-medium { background: rgba(216,155,39,.12); color: #7a5a00; border: 1px solid rgba(216,155,39,.3); }
+    .conf-low { background: rgba(216,95,69,.10); color: #8c3320; border: 1px solid rgba(216,95,69,.3); }
+
+    .expand-icon {
+      color: var(--muted);
+      font-size: .88rem;
+      transition: transform .2s;
+    }
+
+    .section-body {
+      display: none;
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-body.open { display: block; }
+
+    .expand-icon.open { transform: rotate(180deg); }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--line);
+      margin: 14px 0 0;
+    }
+
+    .tab-btn {
+      background: none;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      padding: 9px 14px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: .88rem;
+      transition: color .15s, border-color .15s;
+      margin-bottom: -1px;
+    }
+
+    .tab-btn.active { color: var(--green); border-bottom-color: var(--green); }
+
+    .tab-pane { display: none; padding: 14px 0 4px; }
+    .tab-pane.active { display: block; }
+
+    .tab-pane p { margin: 0 0 10px; line-height: 1.55; font-size: .94rem; }
+    .tab-pane p:last-child { margin-bottom: 0; }
+
+    .source-line {
+      margin-top: 12px;
+      font-size: .8rem;
+      color: var(--muted);
+      font-family: ui-monospace, monospace;
+    }
+
+    /* LOW confidence warning */
+    .low-warning {
+      background: #fff8f2;
+      border: 1px solid rgba(216,95,69,.25);
+      border-left: 3px solid var(--coral);
+      border-radius: 5px;
+      padding: 11px 14px;
+      margin-top: 14px;
+      font-size: .88rem;
+      line-height: 1.5;
+    }
+
+    .low-warning strong { color: var(--coral); }
+
+    .confirm-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .confirm-row input[type="checkbox"] {
+      width: auto;
+      margin-top: 3px;
+      flex-shrink: 0;
+      accent-color: var(--green);
+    }
+
+    .confirm-row label {
+      color: var(--ink);
+      font-size: .9rem;
+      margin: 0;
       cursor: pointer;
     }
 
-    .primary:hover {
-      background: var(--green-dark);
-    }
-
-    .output {
-      min-height: 520px;
-      padding: 22px;
-      display: grid;
-      gap: 18px;
-    }
-
-    .result-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: flex-start;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid rgba(31, 111, 84, 0.3);
-      border-radius: 999px;
-      color: var(--green-dark);
-      padding: 6px 10px;
-      font-size: 0.86rem;
-      white-space: nowrap;
-    }
-
-    h2,
-    h3 {
-      margin: 0;
-      letter-spacing: 0;
-    }
-
-    h2 {
-      font-size: clamp(1.6rem, 3vw, 2.6rem);
-      line-height: 1.02;
-    }
-
-    h3 {
-      font-size: 1.05rem;
-    }
-
-    .recommendation {
-      margin: 0;
-      font-size: 1.28rem;
-      line-height: 1.42;
-    }
-
-    .evidence {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .evidence-item {
-      min-height: 132px;
+    /* Action bar */
+    .action-bar {
+      background: rgba(255,255,255,.84);
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fbfaf6;
-      padding: 14px;
+      box-shadow: var(--shadow);
+      padding: 18px 22px;
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
     }
 
-    .evidence-item span {
-      display: block;
+    .action-hint { font-size: .88rem; color: var(--muted); }
+
+    .action-buttons { display: flex; gap: 12px; align-items: center; }
+
+    .btn-publish {
+      border: 0;
+      border-radius: 6px;
+      background: var(--green);
+      color: #fff;
+      padding: 12px 22px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    .btn-publish:hover:not(:disabled) { background: var(--green-dark); }
+    .btn-publish:disabled { opacity: .42; cursor: not-allowed; }
+
+    .btn-reject {
+      background: none;
+      border: 0;
       color: var(--coral);
-      font-size: 0.8rem;
-      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: .9rem;
+      text-decoration: underline;
+      padding: 0;
     }
 
-    .evidence-item p {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.42;
+    /* ── Published screen ── */
+    .published-card {
+      max-width: 620px;
+      margin: 48px auto 0;
+      background: rgba(255,255,255,.84);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      padding: 40px 36px;
+      text-align: center;
     }
 
-    .next-step,
-    .feedback {
-      border-top: 1px solid var(--line);
-      padding-top: 16px;
+    .tick {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: rgba(31,111,84,.12);
+      color: var(--green);
+      font-size: 1.8rem;
+      margin-bottom: 18px;
     }
 
-    .next-step p {
-      margin: 8px 0 0;
-      color: var(--muted);
-      line-height: 1.45;
-    }
+    .published-card h2 { margin-bottom: 10px; }
+    .published-card p { color: var(--muted); line-height: 1.5; margin: 0 0 24px; }
+
+    .feedback-section { border-top: 1px solid var(--line); padding-top: 22px; text-align: left; }
+    .feedback-section h3 { font-size: 1rem; margin-bottom: 14px; }
 
     .feedback-row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 10px;
+      margin-bottom: 16px;
     }
 
-    .feedback button {
+    .feedback-row button {
       border: 1px solid var(--line);
       border-radius: 999px;
       background: #fbfaf6;
       color: var(--ink);
-      padding: 9px 12px;
+      padding: 9px 14px;
       cursor: pointer;
+      transition: background .15s, border-color .15s;
     }
 
-    .feedback button.selected {
+    .feedback-row button.selected {
       border-color: var(--gold);
-      background: rgba(216, 155, 39, 0.16);
+      background: rgba(216,155,39,.15);
     }
 
-    .status {
-      min-height: 22px;
-      margin-top: 10px;
-      color: var(--green-dark);
-      font-size: 0.95rem;
-    }
+    .feedback-status { font-size: .9rem; color: var(--green-dark); min-height: 20px; }
 
+    /* ── Responsive ── */
     @media (max-width: 820px) {
-      header,
-      .workspace {
-        grid-template-columns: 1fr;
-      }
-
-      .output {
-        min-height: auto;
-      }
-
-      .result-top {
-        display: grid;
-      }
-
-      .evidence {
-        grid-template-columns: 1fr;
-      }
+      header, .workspace { grid-template-columns: 1fr; }
+      .report-header-card { flex-direction: column; }
+      .action-bar { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
 <body>
-  <main class="page">
-    <header>
-      <h1>Prototype Shell</h1>
-      <p class="intro">A standalone Phase 1 concept flow: pick a safe example, add a little context, generate a mocked recommendation, and capture feedback.</p>
-    </header>
+<main class="page">
+  <header>
+    <div>
+      <div class="wordmark">EquInnoLab · Prestatiesport Portal</div>
+      <h1>Report Generator</h1>
+    </div>
+    <p class="intro">Select a rider and analysis session, then generate a draft holistic report for review and publication.</p>
+  </header>
 
-    <section class="workspace" aria-label="Clickable prototype workspace">
-      <form class="panel controls" id="prototype-form">
+  <!-- ──────────────── SCREEN 1 — Session selector ──────────────── -->
+  <section id="screen-select" class="screen active">
+    <div class="workspace">
+
+      <form class="panel controls" id="selector-form">
         <div class="field">
-          <label for="scenario">Example scenario</label>
-          <select id="scenario" name="scenario">
-            <option value="match">Match insight coach</option>
-            <option value="student">Student project helper</option>
-            <option value="support">Support triage assistant</option>
+          <label for="rider-select">Rider</label>
+          <select id="rider-select">
+            <option value="emma">Emma van Houten</option>
+            <option value="lars">Lars Dijkstra · Paard Whisper</option>
           </select>
         </div>
 
         <div class="field">
-          <label for="context">Context to include</label>
-          <textarea id="context" name="context">City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.</textarea>
+          <label for="session-select">Analysis session</label>
+          <select id="session-select"></select>
         </div>
 
-        <button class="primary" type="submit">Generate draft insight</button>
+        <div class="field">
+          <label for="extra-context">Extra context for the report</label>
+          <textarea id="extra-context">Focus on training readiness for the upcoming competition block.</textarea>
+        </div>
+
+        <button class="btn-primary" type="submit" id="generate-btn">Generate report</button>
       </form>
 
-      <section class="panel output" aria-live="polite">
-        <div class="result-top">
-          <div>
-            <h2 id="result-title">Match Insight Coach</h2>
-            <p class="recommendation" id="recommendation">Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.</p>
-          </div>
-          <span class="tag" id="audience">Youth football coach</span>
-        </div>
-
-        <div class="evidence" id="evidence"></div>
-
-        <div class="next-step">
-          <h3>Suggested next step</h3>
-          <p id="next-step">Test this with one coach and ask whether the output changes the next training plan.</p>
-        </div>
-
-        <div class="feedback">
-          <h3>Was this useful?</h3>
-          <div class="feedback-row">
-            <button type="button" data-feedback="Useful">Useful</button>
-            <button type="button" data-feedback="Almost">Almost</button>
-            <button type="button" data-feedback="Not yet">Not yet</button>
-          </div>
-          <div class="status" id="feedback-status"></div>
+      <section class="panel session-summary" id="session-summary" aria-live="polite">
+        <div id="summary-content"></div>
+        <div class="generating" id="generating-indicator">
+          <div class="spinner"></div>
+          <span>Assembling context and generating report…</span>
         </div>
       </section>
-    </section>
-  </main>
 
-  <script>
-    const scenarios = {
-      match: {
-        title: "Match Insight Coach",
-        audience: "Youth football coach",
-        recommendation: "Prioritize finishing after wide cutbacks, then add a short transition-defense cue to prevent counterattacks after turnovers.",
-        evidence: [
-          "High shot volume with low shot accuracy.",
-          "Most chances came from wide areas.",
-          "Counters followed several midfield turnovers."
-        ],
-        nextStep: "Test this with one coach and ask whether the output changes the next training plan."
-      },
-      student: {
-        title: "Student Project Helper",
-        audience: "Workshop participant",
-        recommendation: "Turn the broad idea into a clickable flow that transforms one event goal into a draft task list and feedback prompt.",
-        evidence: [
-          "The idea is real but still broad.",
-          "The first prototype needs one clear journey.",
-          "Peer feedback is more useful than feature completeness."
-        ],
-        nextStep: "Show the shell to two peers before adding integrations."
-      },
-      support: {
-        title: "Support Triage Assistant",
-        audience: "Customer support lead",
-        recommendation: "Create a triage summary with likely cause, sample reply, and one product question for the onboarding team.",
-        evidence: [
-          "Several customers report confusion at the same step.",
-          "The issue affects new users before activation.",
-          "Support notes contain enough detail for a mocked recommendation."
-        ],
-        nextStep: "Ask a support lead if the evidence shown is enough to trust the recommendation."
-      }
-    };
+    </div>
+  </section>
 
-    const form = document.querySelector("#prototype-form");
-    const scenarioInput = document.querySelector("#scenario");
-    const contextInput = document.querySelector("#context");
-    const title = document.querySelector("#result-title");
-    const audience = document.querySelector("#audience");
-    const recommendation = document.querySelector("#recommendation");
-    const evidence = document.querySelector("#evidence");
-    const nextStep = document.querySelector("#next-step");
-    const feedbackStatus = document.querySelector("#feedback-status");
+  <!-- ──────────────── SCREEN 2 — Report review ──────────────── -->
+  <section id="screen-report" class="screen">
 
-    function renderScenario(key) {
-      const scenario = scenarios[key];
-      title.textContent = scenario.title;
-      audience.textContent = scenario.audience;
-      recommendation.textContent = scenario.recommendation;
-      nextStep.textContent = scenario.nextStep;
-      evidence.innerHTML = scenario.evidence.map((item, index) => `
-        <article class="evidence-item">
-          <span>Evidence ${index + 1}</span>
-          <p>${item}</p>
-        </article>
-      `).join("");
-      feedbackStatus.textContent = "";
-      document.querySelectorAll("[data-feedback]").forEach((button) => {
-        button.classList.remove("selected");
-      });
+    <div class="report-nav">
+      <button class="back-link" id="back-btn">← Back to session selector</button>
+    </div>
+
+    <div class="report-header-card" id="report-header-card">
+      <div>
+        <h2 id="rh-name"></h2>
+        <div class="report-meta" id="rh-meta"></div>
+      </div>
+      <span class="badge badge-gold">Draft — awaiting review</span>
+    </div>
+
+    <div id="welfare-flag-container"></div>
+
+    <div id="report-sections"></div>
+
+    <div class="action-bar">
+      <span class="action-hint" id="action-hint">Review all sections before publishing.</span>
+      <div class="action-buttons">
+        <button class="btn-reject" id="reject-btn" type="button">Reject report</button>
+        <button class="btn-publish" id="publish-btn" type="button" disabled>Approve &amp; Publish</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ──────────────── SCREEN 3 — Published ──────────────── -->
+  <section id="screen-published" class="screen">
+    <div class="published-card">
+      <div class="tick">✓</div>
+      <h2>Report published</h2>
+      <p id="published-summary"></p>
+
+      <div class="feedback-section">
+        <h3>Was this prototype useful for testing the Report Generator flow?</h3>
+        <div class="feedback-row" id="feedback-row">
+          <button type="button" data-feedback="Useful">Useful</button>
+          <button type="button" data-feedback="Almost">Almost</button>
+          <button type="button" data-feedback="Not yet">Not yet</button>
+        </div>
+        <div class="field">
+          <label for="feedback-notes">Notes (optional)</label>
+          <textarea id="feedback-notes" style="min-height:68px"></textarea>
+        </div>
+        <div class="feedback-status" id="feedback-status"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  /* ── Mock data ── */
+  const DATA = {
+    emma: {
+      name: "Emma van Houten",
+      subjectType: "rider",
+      consent: true,
+      sessions: [
+        {
+          id: "s-emma-2",
+          label: "8 mei 2026 · Lab · rider",
+          date: "8 mei 2026",
+          mode: "Lab",
+          testTypes: [
+            { key: "pct", label: "Physical Capacity (pct)", status: "complete" },
+            { key: "flexchair", label: "Flexchair Balance", status: "complete" },
+            { key: "mental", label: "Mental Readiness (OMSAT-3)", status: "complete" }
+          ],
+          welfareFlagHtml: null,
+          sections: [
+            {
+              key: "pct",
+              label: "Physical Capacity Test (pct)",
+              confidence: "HIGH",
+              dataInterpretation: `V-sit result: 42 cm (normative range 35–45 cm for riders aged 20–35 — within range).<br>
+Hexagon test: 9.8 s clockwise / 10.2 s counter-clockwise — asymmetry 4.1%, below the 10% flag threshold.<br>
+Wall-sit: left 48 s, right 51 s — side asymmetry 6%, borderline at the 5% monitoring threshold.<br>
+Schöber measurement: 5.5 cm — indicates adequate lumbar mobility (threshold ≥ 4.0 cm).<br>
+Source: AnalysisData #4421, test_type "pct", fields v_sit, hex_cw, hex_ccw, wall_sit_L, wall_sit_R, schober.`,
+              narrativeSynthesis: `Emma's physical foundation is solid for a competitive rider. Core endurance and coordination are both within normative ranges. The slight wall-sit asymmetry (right 6% stronger than left) is worth monitoring over the next assessment cycle — it does not warrant targeted intervention at this stage but should be re-measured in 8–12 weeks to confirm whether it is stable or increasing. Lumbar mobility is adequate. No fitness concerns before the competition block.`,
+              sourceRef: "AnalysisData #4421 · pct · session 8 mei 2026",
+              lowConfirmId: null
+            },
+            {
+              key: "flexchair",
+              label: "Flexchair Balance (flexchair)",
+              confidence: "MEDIUM",
+              dataInterpretation: `Veldon PAR total score: 68 / 100 (1 session — no prior baseline for comparison).<br>
+Balance distribution: neutral 34%, balanced 28%, corrective 23%, unbalanced 15%.<br>
+Dominant off-balance direction: forward-right (vr).<br>
+Unbalanced fraction 15% exceeds the target threshold of &lt; 12%.<br>
+Source: AnalysisData #4422, test_type "flexchair", fields totalScore, neuPct, balPct, corPct, unbPct, domDir.`,
+              narrativeSynthesis: `The flexchair results reveal a mild forward-right weight bias, which may reflect Emma's habitual postural pattern in the saddle. The unbalanced fraction (15%) slightly exceeds the recommended threshold of 12%. Consider introducing targeted proprioceptive training focusing on left-side loading in off-horse sessions. This baseline is now established — a follow-up assessment in 6–8 weeks will determine whether the bias responds to training.<br><br>
+<em>MEDIUM confidence: only 1 flexchair session. No trend comparison is available yet.</em>`,
+              sourceRef: "AnalysisData #4422 · flexchair · session 8 mei 2026",
+              lowConfirmId: null
+            },
+            {
+              key: "mental",
+              label: "Mental Readiness (mental · OMSAT-3)",
+              confidence: "LOW",
+              dataInterpretation: `OMSAT-3 questionnaire completed (home-mode self-report via Questionnaire #881).<br>
+This is Emma's <strong>first mental assessment</strong> — no prior session exists for baseline comparison.<br>
+Skill scores (0–7 scale): Goal Setting 5.8 · Commitment 5.2 · Stress Reaction 3.4 · Fear Control 3.1 · Relaxation 3.6 · Activation Control 2.9 · Focusing 4.1 · Refocusing 4.0 · Imagery 4.5 · Mental Practice 4.2.<br>
+Source: Questionnaire #881 (self-reported), linked to Analysis session 8 mei 2026.`,
+              narrativeSynthesis: `Emma's goal-setting orientation and commitment scores are the strongest results in this assessment, suggesting a good foundation for structured training goals. Activation control (2.9) and fear control (3.1) are the lowest sub-scores, pointing to possible benefit from mental skills training in performance-pressure contexts.<br><br>
+No trend analysis is possible from a single session. A second assessment in 6–8 weeks is required to determine whether these scores reflect a stable profile or situational fluctuation. Recommend discussing the activation and fear control scores with Emma before drawing training conclusions.`,
+              sourceRef: "Questionnaire #881 (self-reported) · mental · session 8 mei 2026",
+              lowConfirmId: "confirm-mental",
+              lowWarningText: "Only 1 mental session available. Trend claims are not permitted (minimum: 2 sessions, per F-09). Confirm below that you have reviewed this section before publishing."
+            }
+          ]
+        },
+        {
+          id: "s-emma-1",
+          label: "14 apr 2026 · Lab · rider",
+          date: "14 apr 2026",
+          mode: "Lab",
+          testTypes: [
+            { key: "pct", label: "Physical Capacity (pct)", status: "complete" },
+            { key: "flexchair", label: "Flexchair Balance", status: "complete" },
+            { key: "mental", label: "Mental Readiness (OMSAT-3)", status: "missing" }
+          ],
+          welfareFlagHtml: null,
+          sections: [
+            {
+              key: "pct",
+              label: "Physical Capacity Test (pct)",
+              confidence: "HIGH",
+              dataInterpretation: "V-sit: 39 cm (within range). Hexagon: 10.3 s / 10.6 s (asymmetry 2.8%). Wall-sit: L 44 s, R 46 s (asymmetry 4.5%).<br>Source: AnalysisData #4101, test_type pct.",
+              narrativeSynthesis: "Solid baseline result for Emma. Wall-sit and hexagon scores are consistent with the normative range for her age group. No concerns.",
+              sourceRef: "AnalysisData #4101 · pct · session 14 apr 2026",
+              lowConfirmId: null
+            },
+            {
+              key: "flexchair",
+              label: "Flexchair Balance (flexchair)",
+              confidence: "HIGH",
+              dataInterpretation: "Veldon PAR: 71. Unbalanced fraction 12% (at threshold). Dominant direction: forward (v).<br>Source: AnalysisData #4102, test_type flexchair.",
+              narrativeSynthesis: "Balance profile is good. Unbalanced fraction is exactly at the monitoring threshold. Establish as baseline for the May session.",
+              sourceRef: "AnalysisData #4102 · flexchair · session 14 apr 2026",
+              lowConfirmId: null
+            }
+          ]
+        }
+      ]
+    },
+    lars: {
+      name: "Lars Dijkstra · Paard Whisper",
+      subjectType: "combination",
+      consent: true,
+      sessions: [
+        {
+          id: "s-lars-1",
+          label: "22 mei 2026 · Lab · combination",
+          date: "22 mei 2026",
+          mode: "Lab",
+          testTypes: [
+            { key: "seatBalance", label: "Seat Balance (seatBalance)", status: "complete" },
+            { key: "teamHeartRate", label: "Team Heart Rate (ridden)", status: "complete" },
+            { key: "lactate", label: "Lactate stap-test (paard)", status: "complete" }
+          ],
+          welfareFlagHtml: `<div class="welfare-flag">
+            <strong>⚠ Welzijns-signalering (P-01)</strong> — Lactate step 3: <strong>4.2 mmol/L</strong> exceeds the welfare threshold of 4.0 mmol/L.
+            Review horse recovery data before presenting performance insights to the coach. This flag must be addressed before publishing.
+          </div>`,
+          sections: [
+            {
+              key: "seatBalance",
+              label: "Seat Balance · Lars (seatBalance)",
+              confidence: "HIGH",
+              dataInterpretation: `Noran AI tracking — sagittal and back views. Gaits analysed: Halt, Walk, Trot, Canter Left, Canter Right.<br>
+Rider marker set (seatBalance — rider body parts only, TC-10).<br>
+Trot: hip angle symmetry 94%, shoulder symmetry 91% — both within the ≥ 88% threshold.<br>
+Canter Left: slight forward lean (+4°) in the third stride — within normal variation.<br>
+Canter Right: consistent. No asymmetry flagged.<br>
+Source: AnalysisData #5201, test_type "seatBalance", noranTracking sagittal + back.`,
+              narrativeSynthesis: `Lars's seat balance in trot and canter is consistent and well within the normative range. The minor forward lean in canter left is not clinically significant but is worth monitoring in the next session. The combination analysis should be compared with the biomechanical (horse+rider) session when that data is available to determine whether horse movement contributes to the lean.`,
+              sourceRef: "AnalysisData #5201 · seatBalance · session 22 mei 2026",
+              lowConfirmId: null
+            },
+            {
+              key: "teamHeartRate",
+              label: "Team Heart Rate · Lars + Whisper (ridden)",
+              confidence: "MEDIUM",
+              dataInterpretation: `Simultaneous HR recording for horse (Whisper) and rider (Lars) across 5 exercise phases.<br>
+Phase 1 Warm-up: horse 68 bpm, rider 92 bpm.<br>
+Phase 2 Working trot: horse 112 bpm, rider 134 bpm.<br>
+Phase 3 Extended canter: horse 162 bpm, rider 155 bpm — both within expected range.<br>
+Phase 4 Collected work: horse 140 bpm, rider 143 bpm.<br>
+Phase 5 Cool-down: horse 82 bpm, rider 108 bpm.<br>
+No phase exceeds 200 bpm (flag threshold) for either athlete.<br>
+Source: AnalysisData #5202, test_type "teamHeartRate" (backend: ridden_hr), TC-09.`,
+              narrativeSynthesis: `Heart rate dynamics for both Lars and Whisper are appropriate for the work demands recorded. The close HR relationship between rider and horse in the extended canter phase is consistent with synchronized effort. MEDIUM confidence: this is the first ridden HR session for this combination — trend analysis requires ≥ 3 sessions per F-09.`,
+              sourceRef: "AnalysisData #5202 · teamHeartRate · session 22 mei 2026",
+              lowConfirmId: null
+            },
+            {
+              key: "lactate",
+              label: "Lactate stap-test · Whisper (horse)",
+              confidence: "MEDIUM",
+              dataInterpretation: `5-step lactate test. Steps: (1) 3.0 m/s · HR 88 · lactate 1.2 mmol/L. (2) 3.8 m/s · HR 118 · lactate 2.1 mmol/L. (3) 4.5 m/s · HR 148 · lactate <strong>4.2 mmol/L ⚠</strong>. (4) 5.0 m/s · HR 171 · lactate 5.8 mmol/L. (5) 5.5 m/s · HR 188 · lactate 7.4 mmol/L.<br>
+Step 3 lactate (4.2 mmol/L) exceeds the welfare threshold of 4.0 mmol/L (P-01).<br>
+LT1 estimated at ~3.4 m/s (inflection point between steps 2 and 3).<br>
+No prior lactate sessions — trend analysis not available (minimum: 3 sessions).<br>
+Source: AnalysisData #5203, test_type "lactate".`,
+              narrativeSynthesis: `Whisper's lactate profile shows a relatively early threshold crossover at approximately 3.4 m/s. The welfare flag at step 3 (4.2 mmol/L) indicates the horse reached a metabolic stress level that requires attention. Do not present lactate threshold figures as performance targets before the sport scientist has reviewed the recovery data from this session. The training recommendation from this result should emphasise aerobic base work at speeds below 3.2 m/s until the threshold improves in a subsequent test.<br><br>
+<em>MEDIUM confidence: 1 session only. Trend analysis requires ≥ 3 sessions.</em>`,
+              sourceRef: "AnalysisData #5203 · lactate · session 22 mei 2026",
+              lowConfirmId: null
+            }
+          ]
+        }
+      ]
     }
+  };
 
-    scenarioInput.addEventListener("change", () => {
-      const starterText = {
-        match: "City U15 kept possession but created too few clear chances. The coach wants one practical training focus for Thursday.",
-        student: "The student has a broad AI idea and needs a quick prototype journey to test with peers.",
-        support: "Three customers report login confusion after the onboarding email. The support lead wants a clear triage view."
-      };
-      contextInput.value = starterText[scenarioInput.value];
-      renderScenario(scenarioInput.value);
+  /* ── State ── */
+  let currentRiderKey = "emma";
+  let currentSessionIdx = 0;
+  let lowConfirmRequired = [];
+  let lowConfirmChecked = new Set();
+
+  /* ── Refs ── */
+  const riderSelect = document.getElementById("rider-select");
+  const sessionSelect = document.getElementById("session-select");
+  const selectorForm = document.getElementById("selector-form");
+  const summaryContent = document.getElementById("summary-content");
+  const generatingIndicator = document.getElementById("generating-indicator");
+
+  const screenSelect = document.getElementById("screen-select");
+  const screenReport = document.getElementById("screen-report");
+  const screenPublished = document.getElementById("screen-published");
+
+  const rhName = document.getElementById("rh-name");
+  const rhMeta = document.getElementById("rh-meta");
+  const welfareFlagContainer = document.getElementById("welfare-flag-container");
+  const reportSections = document.getElementById("report-sections");
+  const actionHint = document.getElementById("action-hint");
+  const publishBtn = document.getElementById("publish-btn");
+  const rejectBtn = document.getElementById("reject-btn");
+  const backBtn = document.getElementById("back-btn");
+  const publishedSummary = document.getElementById("published-summary");
+
+  /* ── Helpers ── */
+  function showScreen(screen) {
+    [screenSelect, screenReport, screenPublished].forEach(s => s.classList.remove("active"));
+    screen.classList.add("active");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function getRider() { return DATA[currentRiderKey]; }
+  function getSession() { return getRider().sessions[currentSessionIdx]; }
+
+  function populateSessions() {
+    sessionSelect.innerHTML = "";
+    getRider().sessions.forEach((s, i) => {
+      const opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = s.label;
+      sessionSelect.appendChild(opt);
+    });
+    currentSessionIdx = 0;
+    renderSummary();
+  }
+
+  function dotClass(status) {
+    return status === "complete" ? "dot-complete" : status === "incomplete" ? "dot-incomplete" : "dot-missing";
+  }
+
+  function statusLabel(status) {
+    return status === "complete" ? "gereed" : status === "incomplete" ? "onvolledig" : "ontbreekt";
+  }
+
+  function renderSummary() {
+    const rider = getRider();
+    const session = getSession();
+    const consentBadge = rider.consent
+      ? `<span class="badge badge-green">GDPR-toestemming ✓</span>`
+      : `<span class="badge badge-red">Geen toestemming ✗</span>`;
+
+    summaryContent.innerHTML = `
+      <div style="margin-bottom:16px">
+        <h2 style="margin-bottom:8px;font-size:1.2rem">${rider.name}</h2>
+        <div class="summary-meta">
+          <span class="badge badge-grey">${session.date}</span>
+          <span class="badge badge-grey">${session.mode}</span>
+          <span class="badge badge-grey">${rider.subjectType}</span>
+          ${consentBadge}
+        </div>
+      </div>
+      <h3>Analysetypen</h3>
+      <ul class="test-list">
+        ${session.testTypes.map(t => `
+          <li>
+            <span class="dot ${dotClass(t.status)}"></span>
+            <span class="test-label">${t.label}</span>
+            <span class="test-status">${statusLabel(t.status)}</span>
+          </li>
+        `).join("")}
+      </ul>
+    `;
+  }
+
+  /* ── Build report sections ── */
+  function buildReport() {
+    const rider = getRider();
+    const session = getSession();
+
+    rhName.textContent = rider.name;
+    rhMeta.textContent = `${session.date} · ${session.mode} · ${rider.subjectType} · ${session.testTypes.filter(t => t.status === "complete").length} analysetypen`;
+
+    welfareFlagContainer.innerHTML = session.welfareFlagHtml || "";
+
+    lowConfirmRequired = [];
+    lowConfirmChecked = new Set();
+
+    reportSections.innerHTML = session.sections.map((sec, idx) => {
+      const confClass = sec.confidence === "HIGH" ? "conf-high" : sec.confidence === "MEDIUM" ? "conf-medium" : "conf-low";
+
+      const lowBlock = sec.lowConfirmId ? `
+        <div class="low-warning">
+          <strong>⚠ Lage betrouwbaarheid</strong> — ${sec.lowWarningText}
+        </div>
+        <div class="confirm-row">
+          <input type="checkbox" id="${sec.lowConfirmId}" data-confirm="${sec.lowConfirmId}">
+          <label for="${sec.lowConfirmId}">Ik heb dit onderdeel beoordeeld en accepteer de datalimieten voor publicatie.</label>
+        </div>
+      ` : "";
+
+      return `
+        <div class="report-section">
+          <div class="section-header" data-section="${idx}">
+            <span class="section-title">${sec.label}</span>
+            <span class="badge conf-badge ${confClass}">${sec.confidence}</span>
+            <span class="expand-icon" id="icon-${idx}">▾</span>
+          </div>
+          <div class="section-body" id="body-${idx}">
+            <div class="tabs" id="tabs-${idx}">
+              <button class="tab-btn active" data-tab="interp" data-section="${idx}">Gegevensinterpretatie</button>
+              <button class="tab-btn" data-tab="synth" data-section="${idx}">Narratieve synthese</button>
+            </div>
+            <div class="tab-pane active" id="pane-interp-${idx}">
+              <p>${sec.dataInterpretation}</p>
+              <div class="source-line">Bron: ${sec.sourceRef}</div>
+            </div>
+            <div class="tab-pane" id="pane-synth-${idx}">
+              <p>${sec.narrativeSynthesis}</p>
+            </div>
+            ${lowBlock}
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    /* collect LOW confirm IDs */
+    session.sections.forEach(sec => {
+      if (sec.lowConfirmId) lowConfirmRequired.push(sec.lowConfirmId);
     });
 
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-      renderScenario(scenarioInput.value);
-    });
+    updatePublishState();
 
-    document.querySelectorAll("[data-feedback]").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll("[data-feedback]").forEach((item) => {
-          item.classList.remove("selected");
-        });
-        button.classList.add("selected");
-        feedbackStatus.textContent = `Feedback captured: ${button.dataset.feedback}`;
+    /* expand/collapse */
+    document.querySelectorAll(".section-header").forEach(header => {
+      header.addEventListener("click", () => {
+        const idx = header.dataset.section;
+        const body = document.getElementById(`body-${idx}`);
+        const icon = document.getElementById(`icon-${idx}`);
+        const isOpen = body.classList.toggle("open");
+        icon.classList.toggle("open", isOpen);
       });
     });
 
-    renderScenario("match");
-  </script>
+    /* tabs */
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = btn.dataset.section;
+        const tab = btn.dataset.tab;
+        document.querySelectorAll(`[data-section="${idx}"].tab-btn`).forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(`pane-interp-${idx}`).classList.remove("active");
+        document.getElementById(`pane-synth-${idx}`).classList.remove("active");
+        document.getElementById(`pane-${tab}-${idx}`).classList.add("active");
+      });
+    });
+
+    /* LOW confirm checkboxes */
+    document.querySelectorAll("[data-confirm]").forEach(cb => {
+      cb.addEventListener("change", () => {
+        if (cb.checked) lowConfirmChecked.add(cb.dataset.confirm);
+        else lowConfirmChecked.delete(cb.dataset.confirm);
+        updatePublishState();
+      });
+    });
+  }
+
+  function updatePublishState() {
+    const allConfirmed = lowConfirmRequired.every(id => lowConfirmChecked.has(id));
+    publishBtn.disabled = !allConfirmed;
+    actionHint.textContent = allConfirmed
+      ? "Alle onderdelen zijn beoordeeld. U kunt het rapport publiceren."
+      : `Bevestig de onderdelen met lage betrouwbaarheid (${lowConfirmRequired.length - lowConfirmChecked.size} resterend) voor publicatie.`;
+  }
+
+  /* ── Event wiring ── */
+  riderSelect.addEventListener("change", () => {
+    currentRiderKey = riderSelect.value;
+    populateSessions();
+  });
+
+  sessionSelect.addEventListener("change", () => {
+    currentSessionIdx = parseInt(sessionSelect.value, 10);
+    renderSummary();
+  });
+
+  selectorForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    summaryContent.style.display = "none";
+    generatingIndicator.classList.add("active");
+
+    setTimeout(() => {
+      generatingIndicator.classList.remove("active");
+      summaryContent.style.display = "";
+      buildReport();
+      showScreen(screenReport);
+    }, 1600);
+  });
+
+  backBtn.addEventListener("click", () => {
+    showScreen(screenSelect);
+  });
+
+  publishBtn.addEventListener("click", () => {
+    const rider = getRider();
+    const session = getSession();
+    publishedSummary.textContent = `Het rapport voor ${rider.name} (sessie ${session.date}) is gepubliceerd en gedeeld met de coach via het portaal.`;
+    showScreen(screenPublished);
+  });
+
+  rejectBtn.addEventListener("click", () => {
+    if (confirm("Rapport afwijzen? Het concept wordt gearchiveerd. U kunt een nieuwe versie genereren vanuit dezelfde sessie.")) {
+      showScreen(screenSelect);
+    }
+  });
+
+  document.querySelectorAll("#feedback-row button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#feedback-row button").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      document.getElementById("feedback-status").textContent = `Feedback vastgelegd: "${btn.dataset.feedback}" — bedankt.`;
+    });
+  });
+
+  /* ── Init ── */
+  populateSessions();
+</script>
 </body>
 </html>

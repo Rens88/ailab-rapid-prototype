@@ -1,0 +1,7 @@
+rider_name,session_date,subject_type,test_types,pct_v_sit_cm,pct_wall_sit_asym_pct,flexchair_total_score,flexchair_unbalanced_pct,mental_activation_score,mental_stress_score,confidence_level,recommendation
+Emma van Houten,2026-05-08,rider,"pct,flexchair,mental",42,6.0,68,15,2.9,3.4,MEDIUM,Focus proprioceptieve training voor linkszij-belasting en plan tweede mentale meting in 6-8 weken.
+Emma van Houten,2026-04-14,rider,"pct,flexchair",39,4.5,71,12,,,HIGH,Sterke fysieke basislijn vastgesteld. Herhaal in 8 weken.
+Lars Dijkstra,2026-05-22,combination,"seatBalance,teamHeartRate,lactate",,,,,,,MEDIUM,Laag welzijnssignaal lactate (4.2 mmol/L stap 3). Aerobe basistraining onder 3.2 m/s aanbevolen.
+Lars Dijkstra,2026-03-10,combination,"seatBalance,teamHeartRate",,,,,,,,HIGH,Zitbalans en HR-dynamiek consistent. Vervolg na 6 weken.
+Sanne Mulder,2026-05-15,rider,"pct,mental",44,3.2,,,5.1,4.8,HIGH,Uitstekende fysieke conditie. Mentale scores stabiel over 2 metingen.
+Sanne Mulder,2026-03-20,rider,"pct,mental",41,5.1,,,4.7,4.2,HIGH,Goede basislijn. Activatiebeheer licht onder gemiddelde.
