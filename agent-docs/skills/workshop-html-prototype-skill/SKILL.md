@@ -5,7 +5,7 @@ description: Use when asked to create, refactor, or review a standalone HTML con
 
 # Workshop HTML Prototype
 
-Create a standalone HTML concept prototype for workshop participants.
+Create a generator-first standalone HTML concept prototype for workshop participants.
 
 The prototype is not meant to be a production app. It is a shareable, mobile-friendly conversation artifact that helps users, coaches, scientists, analysts, and stakeholders quickly understand and test the shape of a use case before building a functional app.
 
@@ -13,9 +13,9 @@ Use this skill when the goal is to turn a workshop use-case canvas, `agent-docs/
 
 ## Core principle
 
-Build a small, believable prototype shell before building the real app.
+Build a small, believable prototype generator before building the real app.
 
-The HTML should:
+The generated HTML should:
 - open directly in a browser
 - require no backend
 - require no build step
@@ -47,8 +47,10 @@ example-data/
 legacy-code/ or legacy-prototype/
   ...
 
-prototype-shell/
-  index.html
+build/
+  example.html
+
+generate_standalone_html.py
 ```
 
 Treat `agent-docs/` as intentional workshop input. Students may already have generated their own constitution, architecture notes, memory, prompts, feature list, and user stories. Do not remove this structure.
@@ -59,44 +61,35 @@ Never use `secret-data/` for a shareable HTML prototype.
 
 ## Standard prototype structure
 
-Use this navigation structure unless the user asks for something else:
+Use this standardized navigation structure unless the user explicitly asks for a different structure:
 
-1. **Overview**
+1. **Context & Challenge**
    - What problem is this prototype about?
-   - What decision or workflow does it support?
+   - Who is affected?
+   - What situation, workflow, or decision makes this worth solving?
 
-2. **Users & Situation**
-   - Who are the intended users?
-   - When and where would they use it?
-   - What do they need to accomplish?
+2. **Assumptions Test**
+   - Which assumptions are most important to test first?
+   - Which parts are still uncertain, fragile, or dependent on better data?
+   - What evidence from the provided documents supports or weakens those assumptions?
 
-3. **Current Process**
-   - What happens today?
-   - Where is the friction?
-   - What is slow, fragmented, unclear, or hard to reproduce?
-
-4. **Prototype Demo**
+3. **Interactive Demo**
    - The main fake interaction.
-   - Let the user select a context, option, athlete/team/group/location/scenario, or mock dataset.
+   - Let the user select a context, option, athlete, team, group, location, scenario, or mock dataset.
    - Show a generated result, advice, dashboard card, report snippet, or planning overview.
+   - This is the only top-level page that may contain additional subpages or tabs when the use case genuinely needs them.
 
-5. **Data & Evidence**
-   - Show which mocked or example data supposedly supports the output.
-   - Include visible context behind the recommendation or result.
-   - Make the prototype feel inspectable, not magical.
-
-6. **Assumptions & Risks**
-   - List the important assumptions.
+4. **What could make this fail?**
+   - List important risks and failure modes.
    - Include data quality, privacy, adoption, representativeness, validation, and model limitations where relevant.
+   - Make it explicit what could break trust or make the prototype unusable in practice.
 
-7. **Feedback**
-   - Ask whether the output is useful.
-   - Ask what is missing.
-   - Include simple buttons or form-like controls, even if they only update the page locally.
+5. **Next Steps**
+   - What should be tested, validated, or built next?
+   - Mention missing data, user feedback, integration needs, privacy checks, and the bridge toward a functional app.
 
-8. **Next Steps**
-   - What would need to be tested or built next?
-   - Mention data access, validation with users, privacy checks, integration, and functional app development.
+Do not expand this into many top-level pages by default. Keep the top-level navigation tight and consistent.
+Build these pages from the provided documents, example data, and safe references. If the source material is incomplete or ambiguous, ask the user for clarification instead of inventing extra sections.
 
 ## Use-case adaptation
 
@@ -119,7 +112,7 @@ The standard pages should help every team explain:
 
 ## Interaction model
 
-Use plain HTML, CSS, and JavaScript unless there is a strong reason not to.
+Use plain HTML, CSS, and JavaScript in the generated artifact unless there is a strong reason not to.
 
 Preferred patterns:
 - tab or step navigation
@@ -130,15 +123,14 @@ Preferred patterns:
 - clickable feedback buttons
 - local-only state in JavaScript
 
+For this workshop template, prefer five top-level tabs or subpages matching the standardized structure above.
+Only add deeper navigation inside `Interactive Demo` when the use case truly needs multiple demo modes.
+
 Do not add heavy libraries unless necessary. Avoid external dependencies when the file should be easy to share offline.
 
 ## HTML conventions
 
-Prefer a single self-contained file:
-
-```text
-prototype-shell/index.html
-```
+Prefer a simple generator that writes a single self-contained HTML file into `build/`.
 
 Use:
 - inline CSS
@@ -149,27 +141,29 @@ Use:
 - clear visual hierarchy
 - enough fake content to make the use case concrete
 
-Keep the code understandable for workshop students.
+Keep the generator code understandable for workshop students.
+Do not treat a generated HTML file as the source of truth.
 
 ## Data handling
 
 When using data:
 - prefer small mocked datasets embedded in the HTML
-- or load from `example-data/` only if the user explicitly wants a generator
+- or load from `example-data/` if the generator needs it
 - do not use private or sensitive data
 - clearly label mock data as mock/example data
 
-If using a generator, keep it optional and simple:
+In this workshop template, the generator is the preferred Phase 1 path:
 
 ```text
 generate_standalone_html.py
-dist/
-  index.html
+build/
+  example.html
+  team-planner-v01.html
+  team-planner-v02.html
 ```
 
-In this workshop template, `generate_standalone_html.py` may be used as a root-level placeholder generator. Treat `dist/index.html` as generated output and update the generator or source data when the page needs to change.
-
-For most workshop cases, a single hand-editable `index.html` is enough.
+Treat everything in `build/` as generated output. Update the generator or safe source data when the page needs to change.
+Use recognizable sequential filenames for user-specific versions.
 
 ## Evidence and explainability
 
@@ -198,7 +192,7 @@ For workshop prototypes:
 
 ## Relationship to Phase 2 apps
 
-This skill covers Phase 1: the standalone clickable shell.
+This skill covers Phase 1: the standalone clickable shell generated from code.
 
 Do not turn it into a Streamlit, Dash, or backend app unless explicitly asked.
 
@@ -214,8 +208,8 @@ The Phase 1 HTML should make the intended interface and product logic clear enou
 ## Delivery checklist
 
 Before finishing, verify that the prototype:
-1. Opens as a standalone HTML file.
-2. Has the standard sections or a deliberate subset.
+1. Opens as a generated standalone HTML file.
+2. Uses the standardized five-part navigation, unless the user explicitly asked for something else.
 3. Works on mobile-sized screens.
 4. Includes a fake but believable interaction.
 5. Shows data/evidence behind the output.

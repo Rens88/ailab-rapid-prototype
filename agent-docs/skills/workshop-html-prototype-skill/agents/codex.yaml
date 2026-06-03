@@ -1,10 +1,10 @@
 interface:
   display_name: "Workshop HTML Prototype"
   short_description: "Create standalone HTML concept prototypes inside workshop repos"
-  default_prompt: "Create or update prototype-shell/index.html using the workshop use-case canvas, agent-docs, example-data, and legacy-code references."
+  default_prompt: "Update generate_standalone_html.py or safe source inputs using the workshop use-case canvas, agent-docs, example-data, and legacy-code references, then generate the result into build/ with a recognizable sequential filename."
 
 workspace:
-  preferred_output: "prototype-shell/index.html"
+  preferred_output: "generate_standalone_html.py"
   read_first:
     - "README.md"
     - "GETTING_STARTED.md"

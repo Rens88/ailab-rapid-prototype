@@ -31,7 +31,12 @@ Describe how agents cooperate inside the system.
 - Agents should avoid duplicate work
 - Agents should treat root-level `app.py` as the intended Phase 2 Streamlit app location
 - A small placeholder working app in `app.py` is acceptable for this workshop template
-- Agents may use `generate_standalone_html.py` to regenerate the richer Phase 1 output in `dist/index.html`
+- Agents should prefer updating `generate_standalone_html.py` or safe source inputs for Phase 1 instead of editing deliverable HTML directly
+- Agents may run `generate_standalone_html.py` to regenerate the richer Phase 1 output in `build/`
+- Agents should not hand-write the generated `.html` deliverable itself
+- Agents should use standardized Phase 1 navigation with these top-level pages: `Context & Challenge`, `Assumptions Test`, `Interactive Demo`, `What could make this fail?`, and `Next Steps`
+- Agents may add subpages or tabs only inside `Interactive Demo` when the use case needs them
+- Agents should derive those pages from the provided documents and ask the user for clarification if important content is missing
 - Generated HTML should stay shareable and should not use `secret-data/`
 
 ---

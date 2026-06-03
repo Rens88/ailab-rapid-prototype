@@ -20,7 +20,8 @@ DEFAULT_SKILL = (
     / "workshop-html-prototype-skill"
     / "SKILL.md"
 )
-DEFAULT_OUTPUT = ROOT / "dist" / "index.html"
+BUILD_DIR = ROOT / "build"
+DEFAULT_OUTPUT = BUILD_DIR / "example.html"
 
 
 CANVAS_FIELDS = {
@@ -163,21 +164,69 @@ def render_html(model: dict[str, Any]) -> str:
     )
 
 
+def slugify(value: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+    return slug or "prototype"
+
+
+def next_versioned_output(build_dir: Path, stem: str) -> Path:
+    pattern = re.compile(rf"^{re.escape(stem)}-v(\d+)\.html$")
+    next_version = 1
+
+    for path in build_dir.glob(f"{stem}-v*.html"):
+        match = pattern.match(path.name)
+        if not match:
+            continue
+        next_version = max(next_version, int(match.group(1)) + 1)
+
+    return build_dir / f"{stem}-v{next_version:02d}.html"
+
+
+def default_output_path(
+    canvas_path: Path, canvas: dict[str, Any], requested_name: str | None
+) -> Path:
+    BUILD_DIR.mkdir(parents=True, exist_ok=True)
+
+    if requested_name:
+        return next_versioned_output(BUILD_DIR, slugify(requested_name))
+
+    if canvas_path.resolve() == DEFAULT_CANVAS.resolve():
+        return DEFAULT_OUTPUT
+
+    project_name = str(canvas.get("projectName", "")).strip()
+    if project_name:
+        return next_versioned_output(BUILD_DIR, slugify(project_name))
+
+    return next_versioned_output(BUILD_DIR, slugify(canvas_path.stem))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate a standalone workshop HTML prototype."
     )
     parser.add_argument("--canvas", type=Path, default=DEFAULT_CANVAS)
     parser.add_argument("--skill", type=Path, default=DEFAULT_SKILL)
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--name",
+        type=str,
+        default=None,
+        help="Recognizable base name for generated build files, for example 'team-planner'.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="Explicit output path. If omitted, the default example is written to build/example.html and custom runs are versioned in build/.",
+    )
     args = parser.parse_args()
 
     canvas = load_json(args.canvas)
     skill = extract_skill_summary(args.skill)
     model = normalize_canvas(canvas, skill)
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(render_html(model), encoding="utf-8")
-    print(f"Wrote {args.output}")
+    output_path = args.output or default_output_path(args.canvas, canvas, args.name)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(render_html(model), encoding="utf-8")
+    print(f"Wrote {output_path}")
 
 
 HTML_TEMPLATE = r"""<!doctype html>
