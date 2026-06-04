@@ -25,19 +25,19 @@ DEFAULT_OUTPUT = BUILD_DIR / "example.html"
 
 
 CANVAS_FIELDS = {
-    "gebruikerContext": "Users & situation",
-    "takenDoelen": "Tasks & goals",
-    "huidigProces": "Current process",
-    "pijnpunten": "Pain points",
-    "aiMogelijkheden": "AI opportunities",
-    "databronnen": "Data sources",
-    "datakwaliteit": "Data quality",
-    "productDienst": "Product shape",
-    "waardecreatie": "Value creation",
-    "ethiekPrivacy": "Ethics & privacy",
-    "kritischeAannames": "Critical assumptions",
-    "succesMetrics": "Success metrics",
-    "tijdlijnTeam": "Timeline & team",
+    "gebruikerContext": "Gebruikerscontext",
+    "takenDoelen": "Taken en doelen",
+    "huidigProces": "Huidig proces",
+    "pijnpunten": "Pijnpunten",
+    "aiMogelijkheden": "AI-kansen",
+    "databronnen": "Databronnen",
+    "datakwaliteit": "Datakwaliteit",
+    "productDienst": "Productvorm",
+    "waardecreatie": "Waardecreatie",
+    "ethiekPrivacy": "Ethiek en privacy",
+    "kritischeAannames": "Kritische aannames",
+    "succesMetrics": "Succesmetingen",
+    "tijdlijnTeam": "Tijdlijn en team",
 }
 
 
@@ -142,8 +142,8 @@ def normalize_canvas(canvas: dict[str, Any], skill: dict[str, str]) -> dict[str,
         )
 
     return {
-        "projectName": str(canvas.get("projectName", "Workshop prototype")),
-        "organisation": str(canvas.get("organisation", "Workshop team")),
+        "projectName": str(canvas.get("projectName", "Workshopprototype")),
+        "organisation": str(canvas.get("organisation", "Workshopteam")),
         "date": str(canvas.get("date", "")),
         "skill": skill,
         "sections": sections,
@@ -230,7 +230,7 @@ def main() -> None:
 
 
 HTML_TEMPLATE = r"""<!doctype html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -276,8 +276,8 @@ HTML_TEMPLATE = r"""<!doctype html>
     header {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: 20px;
-      align-items: end;
+      gap: 12px;
+      align-items: start;
       padding: 22px 0;
       border-bottom: 1px solid var(--line);
     }
@@ -297,16 +297,55 @@ HTML_TEMPLATE = r"""<!doctype html>
       letter-spacing: 0;
     }
 
-    .skill-card {
-      max-width: 360px;
-      background: rgba(255, 255, 255, 0.78);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 14px;
+    .header-tools {
+      display: flex;
+      justify-content: flex-end;
     }
 
-    .skill-card strong { display: block; margin-bottom: 6px; }
-    .skill-card p { margin: 0; color: var(--muted); font-size: 0.94rem; }
+    .options-menu {
+      position: relative;
+    }
+
+    .options-toggle {
+      display: inline-grid;
+      gap: 4px;
+      width: 44px;
+      min-height: 44px;
+      padding: 10px 9px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.86);
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .options-toggle span {
+      display: block;
+      height: 2px;
+      background: var(--ink);
+      border-radius: 999px;
+    }
+
+    .options-toggle::-webkit-details-marker {
+      display: none;
+    }
+
+    .options-panel {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: min(340px, 80vw);
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      z-index: 10;
+    }
+
+    .options-panel h3 {
+      margin-bottom: 8px;
+    }
 
     nav {
       display: flex;
@@ -333,14 +372,19 @@ HTML_TEMPLATE = r"""<!doctype html>
       color: white;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 390px minmax(0, 1fr);
-      gap: 16px;
-      align-items: start;
+    nav button[data-view="demo"] {
+      background: #f4b860;
+      border-color: #f4b860;
+      color: #4b2a00;
+      font-weight: 700;
     }
 
-    aside,
+    nav button[data-view="demo"][aria-pressed="true"] {
+      background: #d27b0d;
+      border-color: #d27b0d;
+      color: white;
+    }
+
     .stage,
     .panel,
     .card {
@@ -350,10 +394,10 @@ HTML_TEMPLATE = r"""<!doctype html>
       box-shadow: var(--shadow);
     }
 
-    aside {
-      padding: 16px;
-      position: sticky;
-      top: 12px;
+    .stage,
+    .panel,
+    .card {
+      box-shadow: none;
     }
 
     .stage {
@@ -435,7 +479,6 @@ HTML_TEMPLATE = r"""<!doctype html>
     }
 
     .card {
-      box-shadow: none;
       padding: 14px;
       cursor: pointer;
     }
@@ -485,12 +528,12 @@ HTML_TEMPLATE = r"""<!doctype html>
 
     .canvas-list {
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
     .canvas-item {
       border-bottom: 1px solid var(--line);
-      padding-bottom: 10px;
+      padding-bottom: 8px;
     }
 
     .canvas-item:last-child { border-bottom: 0; }
@@ -558,13 +601,8 @@ HTML_TEMPLATE = r"""<!doctype html>
     }
 
     @media (max-width: 900px) {
-      header,
-      .grid {
+      header {
         grid-template-columns: 1fr;
-      }
-
-      aside {
-        position: static;
       }
 
       .cards,
@@ -585,36 +623,37 @@ HTML_TEMPLATE = r"""<!doctype html>
         <p class="eyebrow" id="eyebrow"></p>
         <h1 id="title"></h1>
       </div>
-      <section class="skill-card">
-        <strong id="skill-name"></strong>
-        <p id="skill-description"></p>
-      </section>
+      <div class="header-tools">
+        <details class="options-menu">
+          <summary class="options-toggle" aria-label="Opties openen">
+            <span></span>
+            <span></span>
+            <span></span>
+          </summary>
+          <div class="options-panel">
+            <h3>Bronnen</h3>
+            <p>Gegenereerd vanuit een workshopcanvas. De interactie is gemockt, maar de bronnotities blijven inspecteerbaar.</p>
+            <div class="canvas-list" id="canvas-list"></div>
+          </div>
+        </details>
+      </div>
     </header>
 
-    <nav aria-label="Prototype sections">
-      <button type="button" data-view="overview" aria-pressed="true">Overview</button>
-      <button type="button" data-view="demo" aria-pressed="false">Prototype Demo</button>
-      <button type="button" data-view="evidence" aria-pressed="false">Data & Evidence</button>
-      <button type="button" data-view="risks" aria-pressed="false">Assumptions</button>
-      <button type="button" data-view="feedback" aria-pressed="false">Feedback</button>
+    <nav aria-label="Prototype-onderdelen">
+      <button type="button" data-view="overview" aria-pressed="true">Uitdaging</button>
+      <button type="button" data-view="risks" aria-pressed="false">Aannames</button>
+      <button type="button" data-view="demo" aria-pressed="false">Interactieve Demo</button>
+      <button type="button" data-view="evidence" aria-pressed="false">Wat kan er misgaan?</button>
       <button type="button" data-view="next" aria-pressed="false">Next Steps</button>
     </nav>
 
-    <section class="grid">
-      <aside>
-        <h3>Canvas source</h3>
-        <p>This page is generated from a workshop canvas and skill file. The interaction is mocked, but the evidence cards preserve the source thinking.</p>
-        <div class="canvas-list" id="canvas-list"></div>
-      </aside>
-
-      <section class="stage">
-        <section class="view active" id="overview"></section>
-        <section class="view" id="demo"></section>
-        <section class="view" id="evidence"></section>
-        <section class="view" id="risks"></section>
-        <section class="view" id="feedback"></section>
-        <section class="view" id="next"></section>
-      </section>
+    <section class="stage">
+      <section class="view active" id="overview"></section>
+      <section class="view" id="demo"></section>
+      <section class="view" id="evidence"></section>
+      <section class="view" id="risks"></section>
+      <section class="view" id="feedback"></section>
+      <section class="view" id="next"></section>
     </section>
   </main>
 
@@ -643,22 +682,20 @@ HTML_TEMPLATE = r"""<!doctype html>
 
     function list(items, className = "section-list") {
       if (!items || !items.length) {
-        return `<p>No source notes yet.</p>`;
+        return `<p>Nog geen bronnotities.</p>`;
       }
       return `<ul class="${className}">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
     }
 
     function renderShell() {
-      el("#eyebrow").textContent = `${model.organisation} · ${model.date || "workshop canvas"}`;
+      el("#eyebrow").textContent = `${model.organisation} · ${model.date || "workshopcanvas"}`;
       el("#title").textContent = model.projectName;
-      el("#skill-name").textContent = `Skill: ${model.skill.name}`;
-      el("#skill-description").textContent = model.skill.description;
 
       el("#canvas-list").innerHTML = model.sections.map((section) => `
         <article class="canvas-item">
           <button type="button" data-source="${section.key}">
             <strong>${escapeHtml(section.label)}</strong><br>
-            <small>${section.items.length} source notes</small>
+            <small>${section.items.length} bronnotities</small>
           </button>
         </article>
       `).join("");
@@ -673,17 +710,17 @@ HTML_TEMPLATE = r"""<!doctype html>
 
     function renderOverview() {
       el("#overview").innerHTML = `
-        <h2>From fragmented planning to one inspectable prototype</h2>
-        <p>This generated shell turns the KNLTB canvas into a clickable concept: choose a planning dashboard, see a mocked recommendation, inspect the evidence, and capture feedback before building a real app.</p>
+        <h2>Van losse planningsnotities naar een toetsbaar prototype</h2>
+        <p>Deze gegenereerde shell vertaalt het KNLTB-canvas naar een klikbaar concept: kies een planningsonderdeel, bekijk een gemockt advies, inspecteer het bewijs en verzamel feedback voordat je een echte app bouwt.</p>
         <div class="metric-row">
-          <div class="metric"><span>Canvas sections</span><strong>${model.sections.length}</strong></div>
-          <div class="metric"><span>Mock dashboards</span><strong>${model.dashboardCards.length}</strong></div>
-          <div class="metric"><span>Phase</span><strong>1</strong></div>
+          <div class="metric"><span>Canvassecties</span><strong>${model.sections.length}</strong></div>
+          <div class="metric"><span>Mockdashboards</span><strong>${model.dashboardCards.length}</strong></div>
+          <div class="metric"><span>Fase</span><strong>1</strong></div>
         </div>
         <div class="roadmap">
-          <article><h3>Inspect the canvas</h3><p>Use the left panel to jump from source notes to evidence cards.</p></article>
-          <article><h3>Try the fake dashboard</h3><p>Select a dashboard area and generate a first planning recommendation.</p></article>
-          <article><h3>Collect reactions</h3><p>Use the feedback view to record whether the concept is useful enough for a Phase 2 app.</p></article>
+          <article><h3>Bekijk de uitdaging</h3><p>Gebruik de hoofdknoppen om snel van probleemdefinitie naar aannames en demo te gaan.</p></article>
+          <article><h3>Test de demo</h3><p>Kies een dashboardonderdeel en genereer een eerste planningsadvies.</p></article>
+          <article><h3>Open bronnen via opties</h3><p>Gebruik de knop met drie lijnen rechtsboven om bronnotities en onderbouwing te bekijken.</p></article>
         </div>
       `;
     }
@@ -695,10 +732,10 @@ HTML_TEMPLATE = r"""<!doctype html>
     function renderDemo() {
       const card = selectedCard();
       el("#demo").innerHTML = `
-        <h2>Prototype Demo</h2>
-        <p>Select one planning surface and generate a mocked first output. This is deliberately static, but it should feel concrete enough to discuss with users.</p>
+        <h2>Interactieve Demo</h2>
+        <p>Kies een planningsonderdeel en genereer een gemockte eerste output. Dit is bewust statisch, maar concreet genoeg om met gebruikers te bespreken.</p>
         <div class="selector">
-          <label for="dashboard-select">Dashboard focus</label>
+          <label for="dashboard-select">Focus van het dashboard</label>
           <select id="dashboard-select">
             ${model.dashboardCards.map((item) => `<option value="${item.id}" ${item.id === card.id ? "selected" : ""}>${escapeHtml(item.title)}</option>`).join("")}
           </select>
@@ -708,13 +745,13 @@ HTML_TEMPLATE = r"""<!doctype html>
             <article class="card ${item.id === card.id ? "selected" : ""}" data-card="${item.id}">
               <h3>${escapeHtml(item.title)}</h3>
               <p>${escapeHtml(item.signal)}</p>
-              <div class="score" aria-label="Mock readiness score"><span style="--score: ${item.mockScore}%"></span></div>
+              <div class="score" aria-label="Mock gereedheidsscore"><span style="--score: ${item.mockScore}%"></span></div>
             </article>
           `).join("")}
         </div>
         <div class="output">
           <h3>${escapeHtml(card.question)}</h3>
-          <p><strong>Mock recommendation:</strong> ${escapeHtml(card.primaryAction)}</p>
+          <p><strong>Gemockt advies:</strong> ${escapeHtml(card.primaryAction)}</p>
           <ul class="evidence-list">
             ${card.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
           </ul>
@@ -737,10 +774,10 @@ HTML_TEMPLATE = r"""<!doctype html>
     function renderEvidence(activeKey = "takenDoelen") {
       const section = byKey[activeKey] || byKey.takenDoelen;
       el("#evidence").innerHTML = `
-        <h2>Data & Evidence</h2>
-        <p>Generated-looking outputs should stay inspectable. These cards show which canvas notes support the mocked recommendation.</p>
+        <h2>Wat kan er misgaan?</h2>
+        <p>Deze risico's en bewijskaarten laten zien waar het prototype kan stuklopen of waar extra onderbouwing nodig is.</p>
         <div class="selector">
-          <label for="evidence-select">Evidence source</label>
+          <label for="evidence-select">Kies een bron voor inspectie</label>
           <select id="evidence-select">
             ${model.sections.map((item) => `<option value="${item.key}" ${item.key === section.key ? "selected" : ""}>${escapeHtml(item.label)}</option>`).join("")}
           </select>
@@ -759,13 +796,13 @@ HTML_TEMPLATE = r"""<!doctype html>
       const privacy = byKey.ethiekPrivacy?.items || [];
       const quality = byKey.datakwaliteit?.items || [];
       el("#risks").innerHTML = `
-        <h2>Assumptions & Risks</h2>
-        <p>These are the checks to keep visible before turning the shell into a functional app.</p>
-        <h3>Critical assumptions</h3>
+        <h2>Aannames</h2>
+        <p>Dit zijn de controles die zichtbaar moeten blijven voordat deze shell een functionele app wordt.</p>
+        <h3>Kritische aannames</h3>
         ${list(assumptions)}
-        <h3>Data quality</h3>
+        <h3>Datakwaliteit</h3>
         ${list(quality)}
-        <h3>Ethics & privacy</h3>
+        <h3>Ethiek en privacy</h3>
         ${list(privacy)}
       `;
     }
@@ -776,11 +813,11 @@ HTML_TEMPLATE = r"""<!doctype html>
         <div class="feedback">
           <p>${escapeHtml(model.feedbackPrompts[0])}</p>
           <div class="feedback-row">
-            ${["Useful", "Almost", "Not yet"].map((item) => `<button type="button" data-feedback="${item}" class="${state.feedback === item ? "selected" : ""}">${item}</button>`).join("")}
+            ${["Nuttig", "Bijna", "Nog niet"].map((item) => `<button type="button" data-feedback="${item}" class="${state.feedback === item ? "selected" : ""}">${item}</button>`).join("")}
           </div>
-          <label for="feedback-note">What should change before Phase 2?</label>
+          <label for="feedback-note">Wat moet er veranderen voordat dit naar een app gaat?</label>
           <textarea id="feedback-note">${escapeHtml(state.note)}</textarea>
-          <div class="status">${state.feedback ? `Captured: ${escapeHtml(state.feedback)}` : ""}</div>
+          <div class="status">${state.feedback ? `Vastgelegd: ${escapeHtml(state.feedback)}` : ""}</div>
         </div>
       `;
 
@@ -800,17 +837,37 @@ HTML_TEMPLATE = r"""<!doctype html>
       const metrics = byKey.succesMetrics?.items || [];
       el("#next").innerHTML = `
         <h2>Next Steps</h2>
-        <p>Use the feedback from this generated shell to decide what belongs in the root-level Streamlit placeholder app.</p>
+        <p>Gebruik de feedback uit deze gegenereerde shell om te bepalen wat straks wel en niet in de root-level Streamlit-app hoort.</p>
         <div class="roadmap">
-          <article><h3>Validate the input format</h3><p>Agree how groups, staff, players and courts should be entered before building integrations.</p></article>
-          <article><h3>Test one dashboard with users</h3><p>Start with the planning surface that creates the clearest coordination value.</p></article>
-          <article><h3>Move to Phase 2</h3><p>Build the smallest working version in <code>app.py</code> after the HTML concept is clear.</p></article>
+          <article><h3>Valideer de invoer</h3><p>Maak eerst afspraken over groepen, staf, spelers en banen voordat je koppelingen bouwt.</p></article>
+          <article><h3>Test een dashboard met gebruikers</h3><p>Begin met het onderdeel dat de duidelijkste planningswaarde oplevert.</p></article>
+          <article><h3>Ga pas daarna naar fase 2</h3><p>Bouw de kleinste werkende versie in <code>app.py</code> zodra het HTML-concept scherp genoeg is.</p></article>
         </div>
-        <h3>Timeline notes</h3>
+        <h3>Tijdlijnnotities</h3>
         ${list(timeline)}
-        <h3>Success metrics</h3>
+        <h3>Succesmetingen</h3>
         ${list(metrics)}
+        <h3>Feedback</h3>
+        <div class="feedback">
+          <p>${escapeHtml(model.feedbackPrompts[0])}</p>
+          <div class="feedback-row">
+            ${["Nuttig", "Bijna", "Nog niet"].map((item) => `<button type="button" data-feedback="${item}" class="${state.feedback === item ? "selected" : ""}">${item}</button>`).join("")}
+          </div>
+          <label for="feedback-note-next">Wat moet er veranderen voordat dit naar een app gaat?</label>
+          <textarea id="feedback-note-next">${escapeHtml(state.note)}</textarea>
+          <div class="status">${state.feedback ? `Vastgelegd: ${escapeHtml(state.feedback)}` : ""}</div>
+        </div>
       `;
+
+      document.querySelectorAll("[data-feedback]").forEach((button) => {
+        button.addEventListener("click", () => {
+          state.feedback = button.dataset.feedback;
+          renderNext();
+        });
+      });
+      el("#feedback-note-next").addEventListener("input", (event) => {
+        state.note = event.target.value;
+      });
     }
 
     function showView(id) {

@@ -24,6 +24,7 @@ The generated HTML should:
 - fake interaction where needed
 - make assumptions visible
 - invite feedback
+- default to Dutch unless the user explicitly asks for another language
 
 Do not over-engineer. Prefer clarity over completeness.
 
@@ -61,25 +62,26 @@ Never use `secret-data/` for a shareable HTML prototype.
 
 ## Standard prototype structure
 
-Use this standardized navigation structure unless the user explicitly asks for a different structure:
+Use this standardized navigation structure unless the user explicitly asks for a different structure.
+In the generated UI, use these default top-level buttons in this exact order: `Uitdaging`, `Aannames`, `Interactieve Demo`, `Wat kan er misgaan?`, and `Next Steps`.
 
-1. **Context & Challenge**
+1. **Uitdaging**
    - What problem is this prototype about?
    - Who is affected?
    - What situation, workflow, or decision makes this worth solving?
 
-2. **Assumptions Test**
+2. **Aannames**
    - Which assumptions are most important to test first?
    - Which parts are still uncertain, fragile, or dependent on better data?
    - What evidence from the provided documents supports or weakens those assumptions?
 
-3. **Interactive Demo**
+3. **Interactieve Demo**
    - The main fake interaction.
    - Let the user select a context, option, athlete, team, group, location, scenario, or mock dataset.
    - Show a generated result, advice, dashboard card, report snippet, or planning overview.
    - This is the only top-level page that may contain additional subpages or tabs when the use case genuinely needs them.
 
-4. **What could make this fail?**
+4. **Wat kan er misgaan?**
    - List important risks and failure modes.
    - Include data quality, privacy, adoption, representativeness, validation, and model limitations where relevant.
    - Make it explicit what could break trust or make the prototype unusable in practice.
@@ -122,6 +124,8 @@ Preferred patterns:
 - expandable evidence section
 - clickable feedback buttons
 - local-only state in JavaScript
+- a visually distinct `Interactieve Demo` navigation control so the main demo stands out
+- a top-right options-style button with three horizontal lines that contains `Bronnen`
 
 For this workshop template, prefer five top-level tabs or subpages matching the standardized structure above.
 Only add deeper navigation inside `Interactive Demo` when the use case truly needs multiple demo modes.
@@ -140,6 +144,9 @@ Use:
 - readable text
 - clear visual hierarchy
 - enough fake content to make the use case concrete
+
+Do not show a prominent `Skill: workshop-html-prototype` label in the UI by default.
+If the skill metadata is useful, hide it behind an optional control instead of giving it a fixed top-right badge.
 
 Keep the generator code understandable for workshop students.
 Do not treat a generated HTML file as the source of truth.
@@ -204,6 +211,15 @@ If the user wants the next step, recommend a separate Phase 2 implementation:
 - validation and feedback capture
 
 The Phase 1 HTML should make the intended interface and product logic clear enough that Phase 2 can be built deliberately.
+
+## After the first version
+
+After generating the first Phase 1 version, ask the user:
+- whether they want to adapt the color theme and/or add logos
+- to name 2 to 5 preferred HEX colors
+- which logo files in `assets/` should be processed
+- whether they want more interaction on the `Interactieve Demo` page
+- what they would like to add first
 
 ## Delivery checklist
 

@@ -36,7 +36,11 @@ code .
 ```text
 Please create a local .venv in this repository, install the requirements from requirements.txt.
 ```
-- [ ] Ask the agent to verify that `python generate_standalone_html.py` can run:
+- [ ] Ask your agent to use the Python generator code to create the standalone HTML:
+```text
+Please use the Python file generate_standalone_html.py in this repository to generate the standalone HTML for me, and tell me which HTML file was created in build/.
+```
+- [ ] Or ask the agent to verify that `python generate_standalone_html.py` can run:
 ```
 Check whether python generate_standalone_html.py runs successfully.
 ```
@@ -73,6 +77,20 @@ pip install -r requirements.txt
 python generate_standalone_html.py
 ```
 
+- [ ] If you prefer not to activate the virtual environment first, run the generator directly with the Python executable inside `.venv`.
+
+On macOS or Linux:
+
+```bash
+.venv/bin/python generate_standalone_html.py
+```
+
+On Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\python.exe generate_standalone_html.py
+```
+
 - [ ] Open [build/example.html](build/example.html) in your browser and check that the generated example works.
 
 ---
@@ -99,7 +117,7 @@ You're now ready to get started with your own standalone-html for your use-case.
 
 - [ ] Paste this prompt into your agent:
 ```text
-Start the workshop. First read README.md. Then read AGENTS.md at the repo root and every file in agent-docs/. Treat legacy-code/ as reference only and do not copy it. For Phase 1, do not create a standalone HTML file directly. Instead, update generate_standalone_html.py or safe source inputs and generate outputs into build/. After that, summarize the project setup and propose a small plan for a Phase 1 generator-based prototype before editing any files.
+Start the workshop. First read README.md. Then read AGENTS.md at the repo root and every file in agent-docs/. Treat legacy-code/ as reference only and do not copy it. Generate user-facing output in Dutch by default unless I ask for another language. For Phase 1, do not create a standalone HTML file directly. Instead, update generate_standalone_html.py or safe source inputs and generate outputs into build/. After that, summarize the project setup and propose a small plan for a Phase 1 generator-based prototype before editing any files.
 ```
 
 ## 5. Build Phase 1
@@ -112,10 +130,14 @@ Phase 1 is the focus of AI-lab session 3 on June 4, 2026. Phase 2 belongs to the
 - [ ] Ask the agent to generate each version into `build/` with a recognizable sequential filename:
 
 ```text
-Build a small Phase 1 clickable prototype by updating generate_standalone_html.py or safe source inputs. Do not create a standalone HTML deliverable directly. Use mocked or example content only. Make sure there is one clickable end-to-end journey and a small feedback interaction. Generate the result into build/ with a recognizable sequential filename such as build/team-planner-v01.html. Before doing any Phase 2 work, stop and ask me to confirm.
+Build a small Phase 1 clickable prototype by updating generate_standalone_html.py or safe source inputs. Do not create a standalone HTML deliverable directly. Use mocked or example content only. Generate the user-facing output in Dutch by default. Make sure there is one clickable end-to-end journey and a small feedback interaction. Use these default buttons in this exact order: `Uitdaging`, `Aannames`, `Interactieve Demo`, `Wat kan er misgaan?`, `Next Steps`. Make the `Interactieve Demo` button stand out visually. Put `Bronnen` under a top-right options-like button with three horizontal lines instead of in the main button sequence, and omit or hide any visible `Skill: ...` badge. Generate the result into build/ with a recognizable sequential filename such as build/team-planner-v01.html. After generating the first version, ask me whether I want to adapt the color theme and/or add logos from assets/, ask which 2 to 5 HEX colors I like, ask which logo files you should process, and then ask whether I want more interaction on the `Interactieve Demo` page and what I want to add first. Before doing any Phase 2 work, stop and ask me to confirm.
 ```
 
 - [ ] If the prototype is ready and you think about Phase 2, stop first and confirm that you really want to move into the next session's work.
+
+---
+
+NOTE: To generate the standalone html, either ask your agent to do this for you, or call `generate_standalone.html` using Python and your virtual environment.
 
 ## 6. Build Phase 2
 
@@ -140,10 +162,11 @@ Before we start Phase 2, check whether my Phase 1 prototype is stable enough to 
 Suggested prompt:
 
 ```text
-We are ready for Phase 2. First check whether Phase 1 is stable enough to stop iterating for now. Then inspect example-data/ and use any fake or example data you find there. If needed, generate code that synthesizes additional fake data and save it into example-data/. After that, build a minimal readable app in app.py with one meaningful interaction and visible context behind the output.
+We are ready for Phase 2. First check whether Phase 1 is stable enough to stop iterating for now. Then inspect example-data/ and use any fake or example data you find there. If needed, generate code that synthesizes additional fake data and save it into example-data/. Generate the user-facing app in Dutch by default unless I ask for another language. After that, build a minimal readable app in app.py with one meaningful interaction and visible context behind the output.
 ```
 
-### Run The App
+---
+NOTE: To run the app:
 
 Low-tech:
 

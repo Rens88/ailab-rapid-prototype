@@ -27,8 +27,12 @@ This file is the root-level instruction set for any agent working in this reposi
 7. Treat user-specific Phase 1 artifacts as generated outputs named with recognizable sequential filenames such as `build/team-planner-v01.html`, `build/team-planner-v02.html`, and so on.
 8. Treat root-level `app.py` as the intended Phase 2 Streamlit app location.
 9. It is OK for `app.py` to be a small placeholder working app.
-10. For Phase 1 standalone HTML, use standardized navigation with these top-level pages: `Context & Challenge`, `Assumptions Test`, `Interactive Demo`, `What could make this fail?`, and `Next Steps`.
-11. Only `Interactive Demo` may contain additional subpages or tabs when the use case genuinely needs them.
+10. For Phase 1 standalone HTML, use standardized navigation with these default top-level buttons in this exact order: `Uitdaging`, `Aannames`, `Interactieve Demo`, `Wat kan er misgaan?`, and `Next Steps`.
+11. Only `Interactieve Demo` may contain additional subpages or tabs when the use case genuinely needs them.
+12. By default, generate user-facing output in Dutch for both Phase 1 and Phase 2 unless the user explicitly asks for another language.
+13. In Phase 1, make the `Interactieve Demo` navigation item visually distinct from the other top-level buttons.
+14. In Phase 1, keep source links and canvas references visually secondary by placing them under a top-right options-style button with three horizontal lines, not inside the main button sequence.
+15. Do not show a prominent visible skill badge such as `Skill: workshop-html-prototype` unless the user explicitly wants it; omit it or hide it behind an optional control.
 
 The intended flow is:
 
@@ -45,3 +49,5 @@ idea -> agent planning docs -> Phase 1 clickable shell -> Phase 2 functional app
 5. When moving into Phase 2, keep the app minimal and readable.
 6. If the date is June 4, 2026 or earlier and the user seems ready to move into Phase 2, explicitly confirm that they want to continue even though Phase 2 belongs to the next AI-lab session.
 7. Build the Phase 1 page structure from the provided `agent-docs/`, example data, and safe references. If the material is too thin or ambiguous, ask the user for clarification instead of inventing extra pages.
+8. After generating a first version, ask whether the user wants to adapt the color theme and/or add logos. Mention that logos can be added in `assets/`, ask for 2 to 5 preferred HEX colors, and ask which logo files should be processed.
+9. After that, ask whether the user wants more interaction on the `Interactieve Demo` page and what they want to add first.

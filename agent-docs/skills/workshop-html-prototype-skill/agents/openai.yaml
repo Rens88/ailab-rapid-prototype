@@ -1,7 +1,7 @@
 interface:
   display_name: "Workshop HTML Prototype"
   short_description: "Create mobile-friendly standalone HTML concept prototypes for AI workshop use cases"
-  default_prompt: "Use the workshop-html-prototype skill to update generate_standalone_html.py or safe source inputs from a workshop use-case canvas, agent-docs, example data, or legacy-code reference, then generate the result into build/ with a recognizable sequential filename."
+  default_prompt: "Use the workshop-html-prototype skill to update generate_standalone_html.py or safe source inputs from a workshop use-case canvas, agent-docs, example data, or legacy-code reference. Generate user-facing output in Dutch by default. Use these default buttons in this exact order: `Uitdaging`, `Aannames`, `Interactieve Demo`, `Wat kan er misgaan?`, `Next Steps`. Make `Interactieve Demo` stand out, place `Bronnen` under a top-right options button with three horizontal lines, omit a prominent skill badge, then generate the result into build/ with a recognizable sequential filename and ask the user about theme colors, logos, and extra demo interaction."
 
 policy:
   allow_implicit_invocation: true

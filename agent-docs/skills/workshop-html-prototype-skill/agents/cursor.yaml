@@ -1,7 +1,7 @@
 interface:
   display_name: "Workshop HTML Prototype"
   short_description: "Guide Cursor toward simple standalone HTML workshop prototypes"
-  default_prompt: "Update generate_standalone_html.py or safe source inputs to generate a simple mobile-friendly Phase 1 prototype into build/ with a recognizable sequential filename."
+  default_prompt: "Update generate_standalone_html.py or safe source inputs to generate a simple mobile-friendly Phase 1 prototype into build/ with a recognizable sequential filename. Generate the UI in Dutch by default. Use these default buttons in this exact order: `Uitdaging`, `Aannames`, `Interactieve Demo`, `Wat kan er misgaan?`, `Next Steps`. Make `Interactieve Demo` stand out, place `Bronnen` under a top-right options button with three horizontal lines, omit a prominent skill badge, and ask the user about colors, logos, and extra demo interaction after the first version."
 
 workspace:
   preferred_output: "generate_standalone_html.py"
